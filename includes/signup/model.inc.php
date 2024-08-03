@@ -25,14 +25,4 @@ class SignupModel
         $stmt->execute();
         return $this->pdo->lastInsertId();
     }
-
-    public function checkEmailExists($email)
-    {
-        $query = "SELECT email FROM users WHERE email = :email;";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-        $user_email = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $user_email;
-    }
 }

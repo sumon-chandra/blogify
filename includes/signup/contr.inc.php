@@ -1,6 +1,6 @@
 <?php
 require_once "../database.php";
-require_once "model.inc.php";
+require_once "../user/user.inc.php";
 
 class SignupContr
 {
@@ -13,10 +13,9 @@ class SignupContr
 
     public function isEmailExist($email)
     {
-        $model = new SignupModel();
-        $user = $model->checkEmailExists($email);
+        $user = new User();
+        $user = $user->getUser($email);
         $user_email = isset($user["email"]) ? $user["email"] : "";
-        // echo "User Email :" . $user_email ? $user_email : "Unavailable Email";
         if ($user_email) {
             return true;
         } else {

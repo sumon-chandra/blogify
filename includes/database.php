@@ -28,4 +28,8 @@ class Database
     {
         return $this->pdo;
     }
+    function closeConnection()
+    {
+        $this->pdo = null;
+    }
 }

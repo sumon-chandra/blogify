@@ -2,6 +2,7 @@
 require_once "model.inc.php";
 require_once "view.inc.php";
 require_once "contr.inc.php";
+require_once "../config.session.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $first_name = $_POST['first_name'];
@@ -55,14 +56,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // If no errors, save user data to the database
         if (empty($errors)) {
-            echo "No error and ready to store data to database :";
             $signupModel->signup($first_name, $last_name, $email, $hashedPwd, $dob, $gender_id, $profile_picture);
             header("Location: ../../login.php");
         }
 
         // Display errors
         if ($errors) {
-            echo "Errors :" . json_encode($errors);
+            $_SESSION["signup_errors"] = $errors;
         }
     } catch (PDOException $error) {
         echo "Error accord with signup : " . $error->getMessage();

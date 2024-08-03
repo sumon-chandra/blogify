@@ -23,7 +23,7 @@
     <main class="grid place-items-center">
         <div class="container mx-auto">
             <h1 class="text-4xl font-bold text-center mt-12">Signup to Blogify</h1>
-            <form action="includes/signup/signup.inc.php" method="POST" enctype="multipart/form-data" class="w-5/12 mx-auto mt-10 bg-white p-5 rounded-md">
+            <form action="includes/signup/signup.inc.php" method="POST" enctype="multipart/form-data" class="lg:w-5/12 mx-auto mt-10 bg-white p-5 rounded-md">
                 <div class="mb-4 flex items-center justify-between gap-4">
                     <div class="w-full">
                         <label for="first_name" class="block text-gray-700 text-sm font-bold mb-2">First Name</label>

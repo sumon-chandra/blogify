@@ -1,3 +1,8 @@
+<?php
+require_once "includes/config.session.php";
+$errors = isset($_SESSION["login_errors"]) ? $_SESSION["login_errors"] : "";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +28,7 @@
     <main class="grid place-items-center">
         <div class="mx-auto">
             <h1 class="text-4xl font-bold text-center mt-12">Login to Your Blogify Account</h1>
-            <form action="process_login.php" method="POST" class="w-96 mx-auto mt-10 bg-white p-5 rounded-md">
+            <form action="includes/login/login.inc.php" method="POST" enctype="multipart/form-data" class="w-96 mx-auto mt-10 bg-white p-5 rounded-md">
                 <div class="mb-4">
                     <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
                     <input type="email" id="email" name="email" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600" required autofocus>
@@ -35,6 +40,15 @@
                 <button type="submit" class="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Login</button>
                 <p class="text-center text-gray-400 mt-4">Don't have an account? <a href="signup.php" class="text-gray-800 hover:text-gray-700">Sign up</a></p>
             </form>
+            <!-- display the errors list with foreach -->
+            <?php if (!empty($errors)) : ?>
+                <ul class="text-red-500">
+                    <?php foreach ($errors as $error) : ?>
+                        <li><?php echo $error; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
     </main>
 </body>
 
