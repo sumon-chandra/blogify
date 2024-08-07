@@ -11,7 +11,8 @@
 <body class="min-h-screen w-full bg-gray-200">
     <header class="bg-gray-800">
         <nav class="flex items-center justify-between p-4  lg:w-[1250px] mx-auto">
-            <h1 class="text-2xl font-bold text-white">Blogify</h1>
+            <h1 class="text-2xl font-bold text-white"><a href="index.php">Blogify</a>
+            </h1>
             <ul class="flex">
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">Home</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">About</a></li>
@@ -22,7 +23,8 @@
     </header>
     <main class="grid place-items-center">
         <div class="container mx-auto">
-            <h1 class="text-4xl font-bold text-center mt-12">Signup to Blogify</h1>
+            <h1 class="text-4xl font-bold text-center mt-12">Signup to <a href="index.php">Blogify</a>
+            </h1>
             <form action="includes/signup/signup.inc.php" method="POST" enctype="multipart/form-data" class="lg:w-5/12 mx-auto mt-10 bg-white p-5 rounded-md">
                 <div class="mb-4 flex items-center justify-between gap-4">
                     <div class="w-full">

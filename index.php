@@ -2,11 +2,6 @@
 require_once "includes/config.session.php";
 $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : "";
 $isLoggedId = $user_id;
-
-if (!$isLoggedId) {
-    header("Location: login.php");
-    exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +17,8 @@ if (!$isLoggedId) {
 <body class="min-h-screen w-full bg-gray-200">
     <header class="bg-gray-800">
         <nav class="flex items-center justify-between p-4 lg:w-[1250px] mx-auto">
-            <h1 class="text-2xl font-bold text-white">Blogify</h1>
+            <h1 class="text-2xl font-bold text-white"><a href="index.php">Blogify</a>
+            </h1>
             <ul class="flex">
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Home</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">About</a></li>
@@ -39,7 +35,8 @@ if (!$isLoggedId) {
     </header>
     <main>
         <section class="lg:m-52 text-center space-y-5">
-            <h1 class="text-5xl text-gray-800 font-black mt-12">Welcome to Blogify</h1>
+            <h1 class="text-5xl text-gray-800 font-black mt-12">Welcome to <a href="index.php">Blogify</a>
+            </h1>
             <p class="text-lg text-gray-600">This is a sample Blog Management System.</p>
         </section>
     </main>

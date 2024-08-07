@@ -1,6 +1,8 @@
 <?php
 require_once "includes/config.session.php";
 $errors = isset($_SESSION["login_errors"]) ? $_SESSION["login_errors"] : "";
+$user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : "";
+$isLoggedId = $user_id;
 ?>
 
 <!DOCTYPE html>
@@ -16,12 +18,19 @@ $errors = isset($_SESSION["login_errors"]) ? $_SESSION["login_errors"] : "";
 <body class="min-h-screen w-full bg-gray-200">
     <header class="bg-gray-800">
         <nav class="flex items-center justify-between p-4 lg:w-[1250px] mx-auto">
-            <h1 class="text-2xl font-bold text-white">Blogify</h1>
+            <h1 class="text-2xl font-bold text-white"><a href="index.php">Blogify</a>
+            </h1>
             <ul class="flex">
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">Home</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">About</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">Contact</a></li>
-                <li class="mx-4"><a href="login.php" class="text-white hover:text-gray-300">Login</a></li>
+                <li class="mx-4"><a href="blogs.php" class="text-white hover:text-gray-400">Blogs</a></li>
+                <?php if ($isLoggedId) : ?>
+                    <li class="mx-4"><a href="dashboard.php" class="text-white hover:text-gray-400">Dashboard</a></li>
+                    <li class="mx-4"><a href="includes/login/logout.inc.php" class="text-white hover:text-gray-400">Logout</a></li>
+                <?php else : ?>
+                    <li class="mx-4"><a href="login.php" class="text-white hover:text-gray-400">Login</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
     </header>
