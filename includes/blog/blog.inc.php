@@ -3,7 +3,7 @@ require_once "model.inc.php";
 
 class Blog
 {
-    public function getBlogs($blog_tag, $author_id, $sort_by, $start_date, $end_date)
+    public function getBlogs($blog_tag, $author_id, $sort_by, $start_date, $end_date, $search_query)
     {
         $query = "SELECT
                     b.*,
@@ -74,6 +74,10 @@ class Blog
         if (!empty($end_date)) {
             $queryConditions[] = "created_at <= :end_date";
             $queryParameters['end_date'] = $end_date;
+        }
+        if (!empty($search_query)) {
+            $queryConditions[] = "title LIKE :search_query";
+            $queryParameters['search_query'] = "%{$search_query}%";
         }
 
         $blogModel = new BlogModel();

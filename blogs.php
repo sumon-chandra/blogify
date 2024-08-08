@@ -10,6 +10,8 @@ $author_id  = isset($_GET["author_id"]) ? $_GET["author_id"] : "";
 $sort_by = isset($_GET["sort_by"]) ? $_GET["sort_by"] : "";
 $start_date = isset($_GET["start_date"]) ? $_GET["start_date"] : "";
 $end_date = isset($_GET["end_date"]) ? $_GET["end_date"] : "";
+// Search for blogs
+$search_query = isset($_GET["s"]) ? $_GET["s"] : "";
 
 $thumbnail = "assets/dummy.jpg";
 
@@ -22,13 +24,10 @@ function blogDate($date)
 }
 
 // Get Blogs, Authors, Tags
-$blogs = $blogObject->getBlogs($blog_tag, $author_id, $sort_by, $start_date, $end_date);
+$blogs = $blogObject->getBlogs($blog_tag, $author_id, $sort_by, $start_date, $end_date, $search_query);
 $authors = $blogObject->getAuthors();
 $tags = $blogObject->getTags();
 
-// Get parameters
-// $tagParam = isset($_GET["tag"]) ? $_GET["tag"] : "";
-// $authorParam = isset($_GET["author"]) ? $_GET["author"] : "";
 ?>
 
 <!DOCTYPE html>
@@ -65,9 +64,9 @@ $tags = $blogObject->getTags();
             <h1 class="text-2xl font-bold">All blogs</h1>
             <!-- Filter and search -->
             <div class="flex justify-end gap-4">
-                <form action="#" method="post" enctype="multipart/form-data" class="flex bg-white rounded-md">
-                    <input type="text" placeholder="Filter by title..." class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-primary-500" />
-                    <button class="bg-primary-500 px-4 py-2 font-bold rounded-md ml-4">Search</button>
+                <form action="" method="get" enctype="multipart/form-data" class="flex bg-white rounded-md">
+                    <input type="text" name="s" value="<?= $search_query ?>" <?= $search_query ? "autofocus" : "" ?> placeholder="Filter by title..." class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-primary-500" />
+                    <button type="submit" class="bg-primary-500 px-4 py-2 font-bold rounded-md ml-4">Search</button>
                 </form>
                 <div class="flex justify-end gap-4">
                     <button class="hidden bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md">Filter</button>
