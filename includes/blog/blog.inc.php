@@ -85,6 +85,13 @@ class Blog
         return $blogs;
     }
 
+    public function getBlogsById($user_id)
+    {
+        $blogModel = new BlogModel();
+        $blogs = $blogModel->getAllBlogsByUserId($user_id);
+        return $blogs;
+    }
+
     public function createNewBlog($title, $content, $author_id)
     {
         $blogModel = new BlogModel();
@@ -110,6 +117,13 @@ class Blog
         $blogModel = new BlogModel();
         $authors = $blogModel->getAuthors();
         return $authors;
+    }
+
+    public function getAuthor($author_id)
+    {
+        $blogModel = new BlogModel();
+        $author = $blogModel->getAuthor($author_id);
+        return $author;
     }
 
     public function getTags()

@@ -6,20 +6,18 @@ require_once "includes/blog/view.inc.php";
 $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : "";
 $isLoggedId = $user_id;
 
-$blog_tag = isset($_GET["tag"]) ? $_GET["tag"] : "";
-$author_id  = isset($_GET["author_id"]) ? $_GET["author_id"] : "";
-$sort_by = isset($_GET["sort_by"]) ? $_GET["sort_by"] : "";
-$start_date = isset($_GET["start_date"]) ? $_GET["start_date"] : "";
-$end_date = isset($_GET["end_date"]) ? $_GET["end_date"] : "";
+if (!$isLoggedId) {
+    header("Location: login.php");
+    exit();
+}
 // Search for blogs
 $search_query = isset($_GET["s"]) ? $_GET["s"] : "";
-
 
 $blogObject = new Blog();
 
 // Get Blogs, Authors, Tags
-$blogs = $blogObject->getBlogs($blog_tag, $author_id, $sort_by, $start_date, $end_date, $search_query);
-$authors = $blogObject->getAuthors();
+$blogs = $blogObject->getBlogsById($user_id);
+$author = $blogObject->getAuthor($user_id); // TODO: This should be User
 $tags = $blogObject->getTags();
 
 ?>
@@ -30,7 +28,7 @@ $tags = $blogObject->getTags();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog List - Blogify</title>
+    <title><?= $author["author_name"] ?> - Blogify</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -54,8 +52,12 @@ $tags = $blogObject->getTags();
         </nav>
     </header>
     <main class="p-4 lg:p-0 lg:w-[1250px] mx-auto">
+        <div class="mt-10 flex items-start justify-between">
+            <h2 class="text-xl font-black text-gray-600">Welcome, <span class="text-5xl text-gray-800"><?= $author["author_name"] ?></span></h2>
+            <a href="update-profile.php?id=<?= $user_id ?>" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md">Edit profile</a>
+        </div>
         <div class="py-8 flex items-center justify-between">
-            <h1 class="text-2xl font-bold">All blogs</h1>
+            <h1 class="text-2xl font-bold">Your blogs</h1>
             <!-- Filter and search -->
             <div class="flex justify-end gap-4">
                 <form action="" method="get" enctype="multipart/form-data" class="flex bg-white rounded-md">
@@ -119,59 +121,8 @@ $tags = $blogObject->getTags();
                     <h3>There is no blogs!</h3>
                 </div>
             <?php } ?>
-            <div class="md:col-span-1">
-                <div class="p-4 space-y-4 rounded-md bg-white text-gray-800 shadow-md">
-
-                    <h3 class="text-center text-lg font-semibold border-b">Filter</h3>
-                    <form action="blogs.php" method="get" class="flex flex-col gap-4">
-                        <div class="flex gap-2 flex-col">
-                            <label for="tag" class="font-semibold">Tag:</label>
-                            <select name="tag" id="tag" class="w-full p-1.5 rounded-md bg-gray-200">
-                                <option value="">Select</option>
-                                <?php foreach ($tags as $tag) : ?>
-                                    <option value="<?= $tag["tag_name"]; ?>" <?= ($blog_tag == $tag["tag_name"]) ?  "selected" : "" ?>># <a href="blogs.php?<?= $tag["tag_name"] ?>"><?= $tag["tag_name"]; ?></a></option>
-                                <?php endforeach ?>
-                            </select>
-                        </div>
-                        <div class="flex gap-2 flex-col">
-                            <label for="author" class="font-semibold">Author:</label>
-                            <select name="author_id" id="author" class="w-full p-1.5 rounded-md bg-gray-200">
-                                <option value="">Select</option>
-                                <?php foreach ($authors as $author) : ?>
-                                    <option value="<?= $author["author_id"]; ?>" <?= ($author_id == $author["author_id"]) ?  "selected" : "" ?>>
-                                        <?= $author["author_name"]; ?>
-                                    </option>
-                                <?php endforeach ?>
-                            </select>
-                        </div>
-                        <div class="flex gap-2 flex-col">
-                            <label for="sort_by" class="font-semibold">Sort by:</label>
-                            <select name="sort_by" id="sort_by" class="w-full p-1.5 rounded-md bg-gray-200">
-                                <option value="">Select</option>
-                                <option value="newly_created" <?= $sort_by == "newly_created" ? "selected" : "" ?>>New</option>
-                                <option value="old_created" <?= $sort_by == "old_created" ? "selected" : "" ?>>Old</option>
-                                <option value="most_likes" <?= $sort_by == "most_likes" ? "selected" : "" ?>>Most Likes</option>
-                            </select>
-                        </div>
-                        <div class="flex gap-2 flex-col">
-                            <h3 for="between_dates" class="font-semibold">Between Dates:</h3>
-                            <label for="start_date" class="text-xs">From</label>
-                            <input type="date" value="<?= $start_date ?>" name="start_date" id="start_date" class="w-full p-1.5 rounded-md bg-gray-200" />
-                            <label for="end_date" class="text-xs">To</label>
-                            <input type="date" value="<?= $end_date ?>" name="end_date" id="end_date" class="w-full p-1.5 rounded-md bg-gray-200" />
-                        </div>
-                        <div class="mt-4">
-                            <button class="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-md w-full">Go</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div id="blogs"></div>
         </div>
     </main>
-
-    <script src="js/script.js"></script>
 </body>
 
 </html>

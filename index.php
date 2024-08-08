@@ -25,7 +25,7 @@ $isLoggedId = $user_id;
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Contact</a></li>
                 <li class="mx-4"><a href="blogs.php" class="text-white hover:text-gray-400">Blogs</a></li>
                 <?php if ($isLoggedId) : ?>
-                    <li class="mx-4"><a href="dashboard.php" class="text-white hover:text-gray-400">Dashboard</a></li>
+                    <li class="mx-4"><a href="profile.php" class="text-white hover:text-gray-400">Profile</a></li>
                     <li class="mx-4"><a href="includes/login/logout.inc.php" class="text-white hover:text-gray-400">Logout</a></li>
                 <?php else : ?>
                     <li class="mx-4"><a href="login.php" class="text-white hover:text-gray-400">Login</a></li>

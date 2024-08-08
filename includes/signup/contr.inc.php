@@ -14,7 +14,7 @@ class SignupContr
     public function isEmailExist($email)
     {
         $user = new User();
-        $user = $user->getUser($email);
+        $user = $user->getUserByEmail($email);
         $user_email = isset($user["email"]) ? $user["email"] : "";
         if ($user_email) {
             return true;

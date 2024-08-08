@@ -42,6 +42,15 @@ class BlogModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getAllBlogsByUserId($user_id)
+    {
+        $query = "SELECT * FROM blogs WHERE author_id = :user_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function storeNewBlog($title, $content, $author_id)
     {
         $query = "INSERT INTO blogs (title, content, author_id) VALUES (:title, :content, :author_id);";
@@ -103,6 +112,32 @@ class BlogModel
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAuthor($author_id)
+    {
+        $query = "SELECT
+                    CONCAT(u.first_name, ' ', u.last_name) AS author_name,
+                    u.dob,
+                    u.email,
+                    u.updated_at,
+                    u.user_id AS author_id,
+                    u.profile_picture,
+                    g.gender,
+                    r.role
+                FROM
+                    users AS u
+                INNER JOIN roles AS r
+                ON
+                    r.role_id = u.role_id
+                    INNER JOIN genders AS g 
+                    ON g.gender_id = u.gender_id
+                WHERE
+                    u.user_id = :author_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':author_id', $author_id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getTags()

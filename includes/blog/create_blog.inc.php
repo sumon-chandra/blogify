@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
 
-        header("Location: ../../dashboard.php");
+        header("Location: ../../profile.php");
         die();
     } catch (PDOException $error) {
         echo "Error to create a blog : " . $error->getMessage();
