@@ -11,7 +11,7 @@ if (!$isLoggedId) {
 }
 
 $blogObject = new Blog();
-$blogs = $blogObject->getBlogs();
+// $blogs = $blogObject->getBlogs();
 ?>
 
 <!DOCTYPE html>

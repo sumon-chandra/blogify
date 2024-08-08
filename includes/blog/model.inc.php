@@ -15,42 +15,30 @@ class BlogModel
         $this->pdo = $database->getConnection();
     }
 
-    public function getAllBlogs($blog_tag)
+    public function getAllBlogs($queryConditions, $queryParameters, $query, $sort_by)
     {
-        $ROW_QUERY = "SELECT
-                        b.*,
-                         IF(
-                            LENGTH(GROUP_CONCAT(t.tag_name)) > LENGTH(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2)),
-                            CONCAT(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2), ' ...'), 
-                            GROUP_CONCAT(t.tag_name)
-                        ) AS tags
-                    FROM
-                        blogs AS b
-                    LEFT JOIN blog_tags AS bt
-                    ON b.blog_id = bt.blog_id
-                    LEFT JOIN tags AS t 
-                    ON bt.tag_id = t.tag_id
-                    GROUP BY b.blog_id ORDER BY blog_id DESC;";
+        if ($queryConditions) {
+            $query .= " WHERE " . implode(" AND ", $queryConditions);
+        }
 
-        $TAG_QUERY = "SELECT
-                        b.*,
-                         IF(
-                            LENGTH(GROUP_CONCAT(t.tag_name)) > LENGTH(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2)),
-                            CONCAT(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2), ' ...'), 
-                            GROUP_CONCAT(t.tag_name)
-                        ) AS tags
-                    FROM
-                        blogs AS b
-                    LEFT JOIN blog_tags AS bt
-                    ON b.blog_id = bt.blog_id
-                    LEFT JOIN tags AS t 
-                    ON bt.tag_id = t.tag_id
-                    WHERE t.tag_name = '$blog_tag'
-                    GROUP BY b.blog_id ORDER BY blog_id DESC;";
+        $query .= " GROUP BY b.blog_id ORDER BY";
 
-        $query = $blog_tag ? $TAG_QUERY : $ROW_QUERY;
+        if (!empty($sort_by)) {
+            if ($sort_by == "newly_created") {
+                $query .= " blog_id DESC";
+            } else if ($sort_by == "old_created") {
+                $query .= " blog_id ASC";
+            } else if ($sort_by == "most_likes") {
+                $query .= " blog_id DESC";
+            }
+        } else {
+            $query .= " blog_id DESC";
+        }
+
+        // echo "Query: " . $query;
+
         $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
+        $stmt->execute($queryParameters);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -89,5 +77,30 @@ class BlogModel
         $stmt->bindParam(':blog_id', $blog_id);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getAuthors()
+    {
+        $query = "SELECT 
+                    
+                    CONCAT(u.first_name , ' ', u.last_name) AS author_name,
+                    u.user_id AS author_id,
+                    r.role
+                    FROM users AS u 
+                    INNER JOIN roles AS r 
+                    ON r.role_id = u.role_id
+                    WHERE u.role_id = '2'
+                    ORDER BY first_name ASC;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTags()
+    {
+        $query = "SELECT * FROM tags;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
