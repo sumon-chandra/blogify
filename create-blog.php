@@ -55,7 +55,7 @@ $blogObject = new Blog();
                 <textarea cols="10" rows="5" id="content" name="blog_content" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600" required></textarea>
             </div>
             <div class="w-full mb-4">
-                <label for="thumbnail" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
+                <label for="thumbnail" class="block text-gray-700 text-sm font-bold mb-2">Blog Thumbnail</label>
                 <input type="file" id="blog_thumbnail" name="blog_thumbnail" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600">
             </div>
             <div class="flex items-center justify-center">

@@ -6,7 +6,6 @@ $author_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $blog_title = $_POST["blog_title"];
     $blog_content = $_POST["blog_content"];
-    // $blog_category_id = $_POST["blog_category"];
     $blog_thumbnail = $_FILES["blog_thumbnail"]["name"];
 
     try {
@@ -30,12 +29,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             die();
         }
 
-        // Validate blog thumbnail format
-        // Upload blog thumbnail
-        $thumbnail = null;
 
         $blog = new Blog();
-        $newBlogId = $blog->createNewBlog($title, $content, $thumbnail, $author_id);
+        $newBlogId = $blog->createNewBlog($title, $content, $author_id);
+        // Validate blog thumbnail format
+        // Upload blog thumbnail
+        // $thumbnail = null;
+        $allowed = ["jpg", "png", "gif", "jpeg"];
+        $image_temp = $_FILES["blog_thumbnail"]["tmp_name"];
+        $image_ext = strtolower(pathinfo($blog_thumbnail, PATHINFO_EXTENSION));
+        if (!in_array($image_ext, $allowed)) {
+            $errors["invalid_thumbnail"] = "Invalid thumbnail format. Only JPG, PNG, GIF, and JPEG are allowed.";
+            die();
+        }
+        $thumbnail = "thumbnail_" . $newBlogId . "_" . $blog_thumbnail;
+        $upload_path = "../../uploads/blogs/" . $thumbnail;
+
+        if (!empty($blog_thumbnail)) {
+            if (in_array($image_ext, $allowed)) {
+                move_uploaded_file($image_temp, $upload_path);
+                $blog->uploadThumbnail($thumbnail, $newBlogId);
+            }
+        }
 
 
         header("Location: ../../dashboard.php");

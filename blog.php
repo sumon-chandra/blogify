@@ -1,6 +1,7 @@
 <?php
 require_once "includes/config.session.php";
 require_once "includes/blog/blog.inc.php";
+require_once "includes/blog/view.inc.php";
 
 $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : "";
 $blog_id = isset($_GET["blog_id"]) ? $_GET["blog_id"] : "";
@@ -49,7 +50,7 @@ $formattedDate = $dateTime->format("F d Y")
         </div>
         <div>
             <div class="w-full lg:h-72">
-                <img class="w-full h-full object-contain" src="<?php echo $thumbnail; ?>" alt="Blog thumbnail">
+                <img class="w-full h-full object-contain" src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="Blog thumbnail">
             </div>
             <div class="mt-10 flex items-center justify-between">
                 <div class="flex items-center justify-start gap-3">
@@ -62,7 +63,7 @@ $formattedDate = $dateTime->format("F d Y")
                     <?php endforeach; ?>
                     <!-- End of tags loop -->
                 </div>
-                <p class="text-gray-600 text-right">Published on <strong><?php echo $formattedDate; ?></strong></p>
+                <p class="text-gray-600 text-right">Published at <strong><?= $formattedDate; ?></strong></p>
             </div>
             <div class="my-10">
                 <p class="lg:text-xl text-lg"><?= $blog["content"]; ?></p>
@@ -70,7 +71,7 @@ $formattedDate = $dateTime->format("F d Y")
         </div>
         <div class="flex items-center justify-between py-8">
             <div>
-                <p class="text-gray-600">Created by <strong><?php echo $blog["author_name"]; ?></strong></p>
+                <p class="text-gray-600">Created by <strong><?= $blog["author_name"]; ?></strong></p>
             </div>
             <div>
                 <a href="#" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700">Like <strong><?= $blog["total_likes"] ?></strong></a>

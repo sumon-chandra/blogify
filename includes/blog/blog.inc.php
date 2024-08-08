@@ -85,11 +85,17 @@ class Blog
         return $blogs;
     }
 
-    public function createNewBlog($title, $content, $thumbnail, $author_id)
+    public function createNewBlog($title, $content, $author_id)
     {
         $blogModel = new BlogModel();
-        $newBlogId = $blogModel->storeNewBlog($title, $content, $thumbnail, $author_id);
+        $newBlogId = $blogModel->storeNewBlog($title, $content, $author_id);
         return $newBlogId;
+    }
+
+    public function uploadThumbnail($thumbnail, $blog_id)
+    {
+        $blogModel = new BlogModel();
+        $blogModel->storeThumbnail($thumbnail, $blog_id);
     }
 
     public function getBlogById($blog_id)

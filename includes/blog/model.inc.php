@@ -42,16 +42,25 @@ class BlogModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function storeNewBlog($title, $content, $thumbnail, $author_id)
+    public function storeNewBlog($title, $content, $author_id)
     {
-        $query = "INSERT INTO blogs (title, content, thumbnail, author_id) VALUES (:title, :content, :thumbnail, :author_id);";
+        $query = "INSERT INTO blogs (title, content, author_id) VALUES (:title, :content, :author_id);";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
-        $stmt->bindParam(':thumbnail', $thumbnail);
         $stmt->bindParam(':author_id', $author_id);
         $stmt->execute();
         return $this->pdo->lastInsertId();
+    }
+
+    public function storeThumbnail($thumbnail, $blog_id)
+    {
+        $query = "UPDATE blogs SET thumbnail = :thumbnail WHERE blog_id = :blog_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':thumbnail', $thumbnail);
+        $stmt->bindParam(':blog_id', $blog_id);
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 
     public function getSingleBlog($blog_id)

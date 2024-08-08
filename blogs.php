@@ -1,6 +1,7 @@
 <?php
 require_once "includes/config.session.php";
 require_once "includes/blog/blog.inc.php";
+require_once "includes/blog/view.inc.php";
 
 $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : "";
 $isLoggedId = $user_id;
@@ -13,15 +14,8 @@ $end_date = isset($_GET["end_date"]) ? $_GET["end_date"] : "";
 // Search for blogs
 $search_query = isset($_GET["s"]) ? $_GET["s"] : "";
 
-$thumbnail = "assets/dummy.jpg";
 
 $blogObject = new Blog();
-function blogDate($date)
-{
-    $dateTime = new DateTime($date);
-    $formattedDate = $dateTime->format("F d Y");
-    return $formattedDate;
-}
 
 // Get Blogs, Authors, Tags
 $blogs = $blogObject->getBlogs($blog_tag, $author_id, $sort_by, $start_date, $end_date, $search_query);
@@ -82,7 +76,7 @@ $tags = $blogObject->getTags();
                     <?php foreach ($blogs as $blog) : ?>
                         <div class="p-4 space-y-4 rounded-md bg-white text-gray-800 shadow-md h-96 flex flex-col justify-between">
                             <div class="h-40">
-                                <img src="<?= $thumbnail ?>" alt="blog image" class="object-cover w-full h-full">
+                                <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full">
                             </div>
                             <div>
                                 <h3 class="text-lg font-semibold">
