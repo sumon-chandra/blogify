@@ -105,6 +105,12 @@ class Blog
         $blogModel->storeThumbnail($thumbnail, $blog_id);
     }
 
+    public function updateBlogThumbnail($blog_id, $thumbnail)
+    {
+        $blogModel = new BlogModel();
+        $blogModel->updateThumbnail($blog_id, $thumbnail);
+    }
+
     public function getBlogById($blog_id)
     {
         $blogModel = new BlogModel();
@@ -131,5 +137,11 @@ class Blog
         $blogModel = new BlogModel();
         $tags = $blogModel->getTags();
         return $tags;
+    }
+
+    public function updateBlog($blog_id, $title, $content)
+    {
+        $blogModel = new BlogModel();
+        $blogModel->updateBlog($blog_id, $title, $content);
     }
 }

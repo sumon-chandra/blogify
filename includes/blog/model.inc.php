@@ -72,6 +72,16 @@ class BlogModel
         return $stmt->rowCount();
     }
 
+    public function updateThumbnail($blog_id, $thumbnail)
+    {
+        $query = "UPDATE blogs SET thumbnail = :thumbnail WHERE blog_id = :blog_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':thumbnail', $thumbnail);
+        $stmt->bindParam(':blog_id', $blog_id);
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
     public function getSingleBlog($blog_id)
     {
         $query = "SELECT
@@ -146,5 +156,16 @@ class BlogModel
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateBlog($blog_id, $title, $content)
+    {
+        $query = "UPDATE blogs SET title = :title, content = :content WHERE blog_id = :blog_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':content', $content);
+        $stmt->bindParam(':blog_id', $blog_id);
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 }

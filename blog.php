@@ -66,7 +66,7 @@ $formattedDate = $dateTime->format("F d Y")
                 <p class="text-gray-600 text-right">Published at <strong><?= $formattedDate; ?></strong></p>
             </div>
             <div class="my-10">
-                <p class="lg:text-xl text-lg"><?= $blog["content"]; ?></p>
+                <p class="lg:text-xl text-lg whitespace-pre-wrap"><?= $blog["content"]; ?></p>
             </div>
         </div>
         <div class="flex items-center justify-between py-8">

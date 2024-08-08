@@ -76,7 +76,7 @@ $tags = $blogObject->getTags();
             <?php if ($blogs) { ?>
                 <div class="md:col-span-3 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                     <?php foreach ($blogs as $blog) : ?>
-                        <div class="p-4 space-y-4 rounded-md bg-white text-gray-800 shadow-md h-96 flex flex-col justify-between">
+                        <div class="p-4 space-y-4 rounded-md bg-white text-gray-800 shadow-md h-[420px] flex flex-col justify-between">
                             <div class="space-y-2">
                                 <div class="h-40">
                                     <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full">
@@ -111,6 +111,13 @@ $tags = $blogObject->getTags();
                                     <p>
                                         <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>" class="w-full text-gray-800 font-semibold">View Details</a>
                                     </p>
+                                </div>
+                                <div class="mt-1">
+                                    <?php if ($isLoggedId && $blog["author_id"] == $user_id) : ?>
+                                        <div class="flex items-center justify-end">
+                                            <a href="update-blog.php?id=<?= $blog["blog_id"] ?>" class="w-full text-white text-center py-1 rounded-md bg-gray-800 font-semibold">Edit Blog</a>
+                                        </div>
+                                    <?php endif ?>
                                 </div>
                             </div>
                         </div>
