@@ -99,6 +99,12 @@ class Blog
         return $newBlogId;
     }
 
+    public function insertBlogTag($tag_id, $newBlogId)
+    {
+        $blogModel = new BlogModel();
+        $blogModel->storeBlogTag($tag_id, $newBlogId);
+    }
+
     public function uploadThumbnail($thumbnail, $blog_id)
     {
         $blogModel = new BlogModel();
@@ -143,5 +149,12 @@ class Blog
     {
         $blogModel = new BlogModel();
         $blogModel->updateBlog($blog_id, $title, $content);
+    }
+
+    public function deleteBlog($blog_id)
+    {
+        $blogModel = new BlogModel();
+        $blogModel->deleteBlog($blog_id);
+        $blogModel->deleteBlogTags($blog_id);
     }
 }

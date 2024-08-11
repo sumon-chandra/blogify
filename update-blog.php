@@ -55,7 +55,7 @@ $blog_id = $blog["blog_id"];
         </nav>
     </header>
     <main class="lg:w-[1250px] mx-auto">
-        <h1 class="text-2xl font-bold text-center my-10">Create a New Blog</h1>
+        <h1 class="text-2xl font-bold text-center my-10">Update Blog</h1>
         <form action="includes/blog/update-blog.inc.php" enctype="multipart/form-data" method="post" class="lg:w-3/5 mx-auto p-6 bg-white shadow-md rounded">
             <input type="hidden" name="blog_id" value="<?php echo $blog_id; ?>">
             <div class="w-full mb-4">
@@ -71,7 +71,7 @@ $blog_id = $blog["blog_id"];
                 <input type="file" id="blog_thumbnail" name="blog_thumbnail" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600">
             </div>
             <div class="flex items-center justify-center">
-                <button type="submit" class="mt-4 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Create Blog</button>
+                <button type="submit" class="mt-4 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Update Blog</button>
             </div>
         </form>
     </main>

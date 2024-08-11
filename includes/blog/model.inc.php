@@ -62,6 +62,16 @@ class BlogModel
         return $this->pdo->lastInsertId();
     }
 
+    public function storeBlogTag($tag_id, $newBlogId)
+    {
+        $query = "INSERT INTO blog_tags (blog_id, tag_id) VALUES (:blog_id, (SELECT tag_id FROM tags WHERE tag_id = :tag_id));";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':blog_id', $newBlogId);
+        $stmt->bindParam(':tag_id', $tag_id);
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
     public function storeThumbnail($thumbnail, $blog_id)
     {
         $query = "UPDATE blogs SET thumbnail = :thumbnail WHERE blog_id = :blog_id;";
@@ -164,6 +174,24 @@ class BlogModel
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
+        $stmt->bindParam(':blog_id', $blog_id);
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
+    public function deleteBlog($blog_id)
+    {
+        $query = "DELETE FROM blogs WHERE blog_id = :blog_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':blog_id', $blog_id);
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
+    public function deleteBlogTags($blog_id)
+    {
+        $query = "DELETE FROM blog_tags WHERE blog_id = :blog_id;";
+        $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':blog_id', $blog_id);
         $stmt->execute();
         return $stmt->rowCount();

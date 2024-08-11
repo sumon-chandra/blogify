@@ -80,13 +80,13 @@ $tags = $blogObject->getTags();
                                     <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full">
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-semibold">
+                                    <h3 class="text-lg leading-tight font-semibold">
                                         <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
                                             <?= strlen($blog["title"]) <= 50 ? $blog["title"] : substr($blog["title"], 0, 50) . " ..." ?>
                                         </a>
                                     </h3>
-                                    <p class="text-gray-600 text-sm">
-                                        <?= strlen($blog["content"]) <= 120 ? $blog["content"] : substr($blog["content"], 0, 120) . " ..." ?>
+                                    <p class="text-gray-600 text-sm mt-2">
+                                        <?= strlen($blog["content"]) <= 100 ? $blog["content"] : substr($blog["content"], 0, 100) . " ..." ?>
                                     </p>
                                 </div>
                             </div>

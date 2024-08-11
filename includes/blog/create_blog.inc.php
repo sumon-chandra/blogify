@@ -7,6 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $blog_title = $_POST["blog_title"];
     $blog_content = $_POST["blog_content"];
     $blog_thumbnail = $_FILES["blog_thumbnail"]["name"];
+    $blog_tags = $_REQUEST["tags"];
 
     try {
         $errors = array();
@@ -29,31 +30,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             die();
         }
 
-
         $blog = new Blog();
         $newBlogId = $blog->createNewBlog($title, $content, $author_id);
-        // Validate blog thumbnail format
-        // Upload blog thumbnail
-        // $thumbnail = null;
-        $allowed = ["jpg", "png", "gif", "jpeg"];
-        $image_temp = $_FILES["blog_thumbnail"]["tmp_name"];
-        $image_ext = strtolower(pathinfo($blog_thumbnail, PATHINFO_EXTENSION));
-        if (!in_array($image_ext, $allowed)) {
-            $errors["invalid_thumbnail"] = "Invalid thumbnail format. Only JPG, PNG, GIF, and JPEG are allowed.";
-            die();
-        }
-        $thumbnail = "thumbnail_" . $newBlogId . "_" . $blog_thumbnail;
-        $upload_path = "../../uploads/blogs/" . $thumbnail;
 
-        if (!empty($blog_thumbnail)) {
-            if (in_array($image_ext, $allowed)) {
-                move_uploaded_file($image_temp, $upload_path);
-                $blog->uploadThumbnail($thumbnail, $newBlogId);
+        // Insert tags into the blog
+        if (!empty($blog_tags)) {
+            foreach ($blog_tags as $tag_id) {
+                $blog->insertBlogTag($tag_id, $newBlogId);
             }
         }
 
+        $allowed = ["jpg", "png", "gif", "jpeg", "webp"];
+        $image_temp = $_FILES["blog_thumbnail"]["tmp_name"];
+        $image_ext = strtolower(pathinfo($blog_thumbnail, PATHINFO_EXTENSION));
+        $thumbnail_url = "thumbnail_" . $newBlogId . "_" . $blog_thumbnail;
+        $upload_path = "../../uploads/blogs/" . $thumbnail_url;
 
-        header("Location: ../../profile.php");
+        if ($blog_thumbnail) {
+            if (!in_array($image_ext, $allowed)) {
+                $errors["invalid_thumb_format"] = "Invalid thumbnail format. Only JPG, PNG, GIF, and JPEG are allowed.";
+                die();
+            }
+            $result =  move_uploaded_file($image_temp, $upload_path);
+            $blog->uploadThumbnail($thumbnail_url, $newBlogId);
+        }
+
+        header("Location: ../../blogs.php");
         die();
     } catch (PDOException $error) {
         echo "Error to create a blog : " . $error->getMessage();

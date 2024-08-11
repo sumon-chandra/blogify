@@ -60,10 +60,6 @@ $tags = $blogObject->getTags();
             <h1 class="text-2xl font-bold">Your blogs</h1>
             <!-- Filter and search -->
             <div class="flex justify-end gap-4">
-                <form action="" method="get" enctype="multipart/form-data" class="flex bg-white rounded-md">
-                    <input type="text" name="s" value="<?= $search_query ?>" <?= $search_query ? "autofocus" : "" ?> placeholder="Filter by title..." class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-primary-500" />
-                    <button type="submit" class="bg-primary-500 px-4 py-2 font-bold rounded-md ml-4">Search</button>
-                </form>
                 <div class="flex justify-end gap-4">
                     <button class="hidden bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md">Filter</button>
                     <a href="create-blog.php" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md">Create New Blog</a>
@@ -114,8 +110,10 @@ $tags = $blogObject->getTags();
                                 </div>
                                 <div class="mt-1">
                                     <?php if ($isLoggedId && $blog["author_id"] == $user_id) : ?>
-                                        <div class="flex items-center justify-end">
-                                            <a href="update-blog.php?id=<?= $blog["blog_id"] ?>" class="w-full text-white text-center py-1 rounded-md bg-gray-800 font-semibold">Edit Blog</a>
+                                        <div class="flex items-center justify-between gap-4 text-xs">
+                                            <a href="update-blog.php?id=<?= $blog["blog_id"] ?>" class="w-full text-gray-700 text-left py-1 rounded-md font-semibold">Edit Blog</a>
+                                            <a href="includes/blog/delete-blog.inc.php?blog_id=<?= $blog["blog_id"] ?>" class="w-full text-red-600 text-right py-1 rounded-md font-semibold">Delete Blog</a>
+
                                         </div>
                                     <?php endif ?>
                                 </div>

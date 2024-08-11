@@ -22,6 +22,7 @@ $blogObject = new Blog();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create A New Blog - Blogify</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/multiselect.js"></script>
 </head>
 
 <body class="min-h-screen w-full bg-gray-200">
@@ -54,9 +55,21 @@ $blogObject = new Blog();
                 <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Content</label>
                 <textarea cols="10" rows="5" id="content" name="blog_content" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600" required></textarea>
             </div>
-            <div class="w-full mb-4">
-                <label for="thumbnail" class="block text-gray-700 text-sm font-bold mb-2">Blog Thumbnail</label>
-                <input type="file" id="blog_thumbnail" name="blog_thumbnail" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600">
+            <div class="flex items-start justify-between gap-4">
+                <div class="w-full mb-4">
+                    <label for="thumbnail" class="block text-gray-700 text-sm font-bold mb-2">Blog Thumbnail</label>
+                    <input type="file" id="blog_thumbnail" name="blog_thumbnail" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600">
+                </div>
+                <div class="w-full mb-4">
+                    <label for="tags" class="block text-gray-700 text-sm font-bold mb-2">Select Tag</label>
+                    <select name="tags[]" id="tags" multiple multiselect-search="true" multiselect-max-items="3" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600">
+                        <?php
+                        $tags = $blogObject->getTags();
+                        foreach ($tags as $tag) : ?>
+                            <option value="<?= $tag["tag_id"]; ?>"><?= $tag["tag_name"]; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
             </div>
             <div class="flex items-center justify-center">
                 <button type="submit" class="mt-4 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Create Blog</button>
