@@ -24,7 +24,7 @@ $authors = $blogObject->getAuthors();
 $tags = $blogObject->getTags();
 
 $userModel = new User();
-$user_role = $userModel->userRole($user_id);
+$user_role = $isLoggedId ? $userModel->userRole($user_id) : "";
 $admin = $user_role == "Admin" ? "Admin" : "";
 ?>
 
@@ -44,7 +44,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
             <h1 class="text-2xl font-bold text-white"><a href="index.php">Blogify</a>
             </h1>
             <ul class="flex">
-                <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Home</a></li>
+                <li class="mx-4"><a href="index.php" class="text-white hover:text-gray-400">Home</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">About</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Contact</a></li>
                 <li class="mx-4"><a href="blogs.php" class="text-white hover:text-gray-400">Blogs</a></li>
@@ -81,7 +81,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
             <?php if ($blogs) { ?>
                 <div class="md:col-span-3 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                     <?php foreach ($blogs as $blog) : ?>
-                        <div class="p-4 space-y-4 rounded-md bg-white text-gray-800 shadow-md h-auto flex flex-col justify-between">
+                        <div class="p-4 space-y-4 rounded-md bg-white text-gray-800 shadow-md h-[22rem] flex flex-col justify-between">
                             <div class="space-y-2">
                                 <div class="h-40">
                                     <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full">

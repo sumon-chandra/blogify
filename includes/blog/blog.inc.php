@@ -102,6 +102,13 @@ class Blog
         return $pendingBlogs;
     }
 
+    public function getBlogsByStatusAndUser($user_id, $status_id)
+    {
+        $blogModel = new BlogModel();
+        $pendingBlogs = $blogModel->getBlogsByStatusAndUser($user_id, $status_id);
+        return $pendingBlogs;
+    }
+
     function getPendingBlogs()
     {
         $blogModel = new BlogModel();

@@ -40,7 +40,7 @@ $gender_id = isset($user["gender_id"]) ? $user["gender_id"] : '';
             <h1 class="text-2xl font-bold text-white"><a href="index.php">Blogify</a>
             </h1>
             <ul class="flex">
-                <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Home</a></li>
+                <li class="mx-4"><a href="index.php" class="text-white hover:text-gray-400">Home</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">About</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Contact</a></li>
                 <li class="mx-4"><a href="blogs.php" class="text-white hover:text-gray-400">Blogs</a></li>

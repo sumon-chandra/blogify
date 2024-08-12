@@ -11,8 +11,14 @@ $blogModel = new Blog();
 
 $user_role = $userModel->userRole($user_id);
 $admin = $user_role == "Admin" ? "Admin" : "";
-if (!$isLoggedId || !$user_role) {
+
+if (!$isLoggedId) {
     header("Location: login.php");
+    die();
+}
+
+if (!$admin) {
+    header("Location: index.php");
     die();
 }
 
@@ -51,7 +57,7 @@ $authors = $blogModel->getAuthors();
             <h1 class="text-2xl font-bold text-white"><a href="index.php">Blogify</a>
             </h1>
             <ul class="flex">
-                <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Home</a></li>
+                <li class="mx-4"><a href="index.php" class="text-white hover:text-gray-400">Home</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">About</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Contact</a></li>
                 <li class="mx-4"><a href="blogs.php" class="text-white hover:text-gray-400">Blogs</a></li>
@@ -71,17 +77,23 @@ $authors = $blogModel->getAuthors();
         <section class="my-7">
             <h2 class="text-xl text-gray-700 font-bold">Hi <span class="text-5xl font-black bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 text-transparent bg-clip-text"> <?= $user["first_name"] ?></span>, welcome to dashboard!</h2>
             <div class="flex items-center justify-between gap-10 mt-5 select-none">
-                <div class="w-full text-center text-gray-200 bg-purple-600 rounded-lg p-6 cursor-pointer">
-                    <h3 class="text-lg font-bold">Total Approved Blogs</h3>
-                    <h2 class="text-7xl font-black"><?= $totalBlogs ?></h2>
+                <div class="w-full text-center text-gray-200 bg-purple-600 rounded-lg cursor-pointer">
+                    <a href="#total_approve_blogs" class="w-full block p-6">
+                        <h3 class="text-lg font-bold">Total Approved Blogs</h3>
+                        <h2 class="text-7xl font-black"><?= $totalBlogs ?></h2>
+                    </a>
                 </div>
-                <div class="w-full text-center text-gray-200 bg-orange-600 rounded-lg p-6 cursor-pointer">
-                    <h3 class="text-lg font-bold">Total Authors</h3>
-                    <h2 class="text-7xl font-black"><?= $totalAuthors ?></h2>
+                <div class="w-full text-center text-gray-200 bg-orange-600 rounded-lg cursor-pointer">
+                    <a href="#total_authors" class="w-full block p-6">
+                        <h3 class="text-lg font-bold">Total Authors</h3>
+                        <h2 class="text-7xl font-black"><?= $totalAuthors ?></h2>
+                    </a>
                 </div>
-                <div class="w-full text-center text-gray-200 bg-teal-600 rounded-lg p-6 cursor-pointer">
-                    <h3 class="text-lg font-bold">Pending Blogs</h3>
-                    <h2 class="text-7xl font-black"><?= $pendingBlogs ?></h2>
+                <div class="w-full text-center text-gray-200 bg-teal-600 rounded-lg cursor-pointer">
+                    <a href="#pending_blogs" class="block w-full p-6">
+                        <h3 class="text-lg font-bold">Pending Blogs</h3>
+                        <h2 class="text-7xl font-black"><?= $pendingBlogs ?></h2>
+                    </a>
                 </div>
             </div>
         </section>

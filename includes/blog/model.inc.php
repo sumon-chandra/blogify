@@ -56,6 +56,22 @@ class BlogModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getBlogsByStatusAndUser($author_id, $status_id)
+    {
+        $query = "SELECT 
+                    b.*,
+                    CONCAT(u.first_name, ' ', u.last_name) AS author_name,
+                    u.user_id AS author_id
+                    FROM blogs AS b 
+                    LEFT JOIN users AS u 
+                    ON u.user_id = b.author_id 
+                    WHERE b.status_id = :status_id AND b.author_id = :author_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':status_id', $status_id);
+        $stmt->bindParam(':author_id', $author_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function totalBlogs()
     {

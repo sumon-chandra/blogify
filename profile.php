@@ -27,6 +27,7 @@ $user_id = $userId ? $userId : $user_session_id;
 // Get Blogs, Authors, Tags
 $approved_blogs = $blogObject->getApprovedBlogsById($user_id);
 $denied_blogs = $blogObject->getDeniedBlogsById($user_id);
+$pending_blogs = $blogObject->getBlogsByStatusAndUser($user_id, "1");
 $user = $userModel->getUserById($user_id);
 $tags = $blogObject->getTags();
 
@@ -51,7 +52,7 @@ $user_name = $user["first_name"] . " " . $user["last_name"];
             <h1 class="text-2xl font-bold text-white"><a href="index.php">Blogify</a>
             </h1>
             <ul class="flex">
-                <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Home</a></li>
+                <li class="mx-4"><a href="index.php" class="text-white hover:text-gray-400">Home</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">About</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Contact</a></li>
                 <li class="mx-4"><a href="blogs.php" class="text-white hover:text-gray-400">Blogs</a></li>
@@ -90,13 +91,14 @@ $user_name = $user["first_name"] . " " . $user["last_name"];
                     <div class="bg-white rounded-sm p-4 mt-4 space-y-2 shadow-md">
                         <h3 class="text-xl font-bold text-gray-800 border-b border-gray-800 text-center pb-1">Your Blogs</h3>
                         <div>
-                            <p class="text-gray-500">Total Blogs: <strong class="text-gray-800"><?= count($approved_blogs) + count($denied_blogs) ?></strong></p>
+                            <p class="text-gray-500">Total Blogs: <strong class="text-gray-800"><?= count($approved_blogs) + count($denied_blogs) + count($pending_blogs) ?></strong></p>
                             <p class="text-gray-500">Approved Blogs: <strong class="text-gray-800"><?= count($approved_blogs) ?></strong></p>
+                            <p class="text-gray-500">Pending Blogs: <strong class="text-gray-800"><?= count($pending_blogs) ?></strong></p>
                             <p class="text-gray-500">Denied Blogs: <strong class="text-gray-800"><?= count($denied_blogs) ?></strong></p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <a href="blogs.php?user_id=<?= $user_id ?>" class="text-gray-800 hover:text-gray-700 font-bold">View All</a>
-                            <a href="blogs.php?user_id=<?= $user_id ?>&status=pending" class="text-gray-800 hover:text-gray-700 font-bold">Pending</a>
+                            <a href="#" class="text-gray-800 hover:text-gray-700 font-bold hover:underline">View All</a> |
+                            <a href="users-blogs.php?user_id=<?= $user_id ?>&status=pending" class="text-gray-800 hover:text-gray-700 font-bold hover:underline">Pending</a>
                         </div>
                     </div>
                 </div>
@@ -177,7 +179,7 @@ $user_name = $user["first_name"] . " " . $user["last_name"];
                 </div>
             <?php } else { ?>
                 <div class="grid place-items-center">
-                    <h3 class="text-xl font-bold text-gray-700">You haven't any approved blogs!</h3>
+                    <h3 class="text-xl font-bold text-gray-500">You haven't any approved blogs!</h3>
                 </div>
             <?php } ?>
         </div>
@@ -185,58 +187,64 @@ $user_name = $user["first_name"] . " " . $user["last_name"];
         <div class="my-10">
             <h1 class="text-2xl font-bold text-red-600">Your Denied blogs</h1>
             <div class="mt-10">
-                <?php foreach ($denied_blogs as $blog) : ?>
-                    <div class="p-4 rounded-md bg-white text-gray-800 shadow-md h-auto flex justify-between">
-                        <div class="flex gap-4">
-                            <div class="h-40">
-                                <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full">
-                            </div>
-                            <div class="flex flex-col justify-between">
-                                <div>
-                                    <h3 class="text-lg font-semibold">
-                                        <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
-                                            <?= strlen($blog["title"]) <= 50 ? $blog["title"] : substr($blog["title"], 0, 50) . " ..." ?>
-                                        </a>
-                                    </h3>
-                                    <p class="text-gray-600 text-sm">
-                                        <?= strlen($blog["content"]) <= 220 ? $blog["content"] : substr($blog["content"], 0, 220) . " ..." ?>
-                                    </p>
+                <?php if (empty($denied_blogs)) : ?>
+                    <div class="grid place-items-center">
+                        <h3 class="text-xl font-bold text-gray-500">You haven't any denied blogs!</h3>
+                    </div>
+                <?php else : ?>
+                    <?php foreach ($denied_blogs as $blog) : ?>
+                        <div class="p-4 rounded-md bg-white text-gray-800 shadow-md h-auto flex justify-between">
+                            <div class="flex gap-4">
+                                <div class="h-40">
+                                    <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full">
                                 </div>
-                                <div class="mt-3 flex flex-col">
-                                    <div class="flex items-center flex-wrap">
-                                        <?php if (isset($blog["tags"])) : ?>
-                                            <?php foreach (explode(",", $blog["tags"]) as $tag) : ?>
-                                                <a href="blogs.php?tag=<?= $tag ?>">
-                                                    <strong class="inline-block text-gray-500 px-2 py-1 text-xs cursor-pointer">#<?= $tag ?></strong>
-                                                </a>
-                                            <?php endforeach ?>
-                                        <?php endif ?>
+                                <div class="flex flex-col justify-between">
+                                    <div>
+                                        <h3 class="text-lg font-semibold">
+                                            <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
+                                                <?= strlen($blog["title"]) <= 50 ? $blog["title"] : substr($blog["title"], 0, 50) . " ..." ?>
+                                            </a>
+                                        </h3>
+                                        <p class="text-gray-600 text-sm">
+                                            <?= strlen($blog["content"]) <= 220 ? $blog["content"] : substr($blog["content"], 0, 220) . " ..." ?>
+                                        </p>
                                     </div>
-                                    <div class="grid grid-cols-4">
-                                        <div class="col-span-3 flex items-center justify-start gap-7">
-                                            <div class="flex items-center justify-start gap-3">
-                                                <p href="#" class="text-gray-700 text-left py-1 rounded-md font-semibold cursor-pointer">Like <strong>10</strong></p>
-                                                <p href="#" class="text-gray-700 text-left py-1 rounded-md font-semibold cursor-pointer">Comment <strong>6</strong></p>
-                                                <p href="#" class="text-gray-700 text-left py-1 rounded-md font-semibold cursor-pointer">Share <strong>2</strong></p>
-                                            </div>
-                                            <p>
-                                                <small class="font-semibold"><?= blogDate($blog["created_at"]) ?></small>
-                                            </p>
+                                    <div class="mt-3 flex flex-col">
+                                        <div class="flex items-center flex-wrap">
+                                            <?php if (isset($blog["tags"])) : ?>
+                                                <?php foreach (explode(",", $blog["tags"]) as $tag) : ?>
+                                                    <a href="blogs.php?tag=<?= $tag ?>">
+                                                        <strong class="inline-block text-gray-500 px-2 py-1 text-xs cursor-pointer">#<?= $tag ?></strong>
+                                                    </a>
+                                                <?php endforeach ?>
+                                            <?php endif ?>
                                         </div>
-                                        <div class="col-span-1 flex items-center justify-end gap-4 text-xs mt-2">
-                                            <p>
-                                                <a href="update-blog.php?id=<?= $blog["blog_id"] ?>" class="w-full text-gray-700 text-left py-1 rounded-md font-semibold underline">Edit Blog</a>
-                                            </p>
-                                            <p>
-                                                <a href="includes/blog/delete-blog.inc.php?blog_id=<?= $blog["blog_id"] ?>" class="w-full text-red-600 text-right py-1 rounded-md font-semibold underline">Delete Blog</a>
-                                            </p>
+                                        <div class="grid grid-cols-4">
+                                            <div class="col-span-3 flex items-center justify-start gap-7">
+                                                <div class="flex items-center justify-start gap-3">
+                                                    <p href="#" class="text-gray-700 text-left py-1 rounded-md font-semibold cursor-pointer">Like <strong>10</strong></p>
+                                                    <p href="#" class="text-gray-700 text-left py-1 rounded-md font-semibold cursor-pointer">Comment <strong>6</strong></p>
+                                                    <p href="#" class="text-gray-700 text-left py-1 rounded-md font-semibold cursor-pointer">Share <strong>2</strong></p>
+                                                </div>
+                                                <p>
+                                                    <small class="font-semibold"><?= blogDate($blog["created_at"]) ?></small>
+                                                </p>
+                                            </div>
+                                            <div class="col-span-1 flex items-center justify-end gap-4 text-xs mt-2">
+                                                <p>
+                                                    <a href="update-blog.php?id=<?= $blog["blog_id"] ?>" class="w-full text-gray-700 text-left py-1 rounded-md font-semibold underline">Edit Blog</a>
+                                                </p>
+                                                <p>
+                                                    <a href="includes/blog/delete-blog.inc.php?blog_id=<?= $blog["blog_id"] ?>" class="w-full text-red-600 text-right py-1 rounded-md font-semibold underline">Delete Blog</a>
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach ?>
+                    <?php endforeach ?>
+                <?php endif; ?>
             </div>
         </div>
     <?php endif; ?>
