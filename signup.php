@@ -1,3 +1,8 @@
+<?php
+require_once "includes/config.session.php";
+$errors = isset($_SESSION["signup_errors"]) ? $_SESSION["signup_errors"] : "";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,7 +19,7 @@
             <h1 class="text-2xl font-bold text-white"><a href="index.php">Blogify</a>
             </h1>
             <ul class="flex">
-                <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">Home</a></li>
+                <li class="mx-4"><a href="index.php" class="text-white hover:text-gray-300">Home</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">About</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">Contact</a></li>
                 <li class="mx-4"><a href="login.php" class="text-white hover:text-gray-300">Login</a></li>
@@ -22,10 +27,27 @@
         </nav>
     </header>
     <main class="grid place-items-center">
-        <div class="container mx-auto">
-            <h1 class="text-4xl font-bold text-center mt-12">Signup to <a href="index.php">Blogify</a>
+        <div class="lg:w-5/12 mx-auto mt-20 bg-white p-5 rounded-md space-y-5">
+            <h1 class="text-lg font-bold text-center">Signup to <a href="index.php">Blogify</a>
             </h1>
-            <form action="includes/signup/signup.inc.php" method="POST" enctype="multipart/form-data" class="lg:w-5/12 mx-auto mt-10 bg-white p-5 rounded-md">
+            <!-- Display errors -->
+            <?php if (!empty($errors)) : ?>
+                <div class="mt-4 text-center font-xs font-semibold text-red-500">
+                    <ul>
+                        <?php foreach ($errors as $error) : ?>
+                            <li><?= $error; ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
+            <?php
+            if (isset($_SESSION["signup_errors"])) {
+                unset($_SESSION["signup_errors"]);
+            }
+            ?>
+
+            <form action="includes/signup/signup.inc.php" method="POST" enctype="multipart/form-data">
                 <div class="mb-4 flex items-center justify-between gap-4">
                     <div class="w-full">
                         <label for="first_name" class="block text-gray-700 text-sm font-bold mb-2">First Name</label>
@@ -67,6 +89,7 @@
                 <button type="submit" class="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Signup</button>
                 <p class="text-center text-gray-400 mt-4">Already have an account? <a href="login.php" class="text-gray-800 hover:text-gray-700">Login</a></p>
             </form>
+        </div>
     </main>
 </body>
 

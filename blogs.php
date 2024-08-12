@@ -34,7 +34,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog List - Blogify</title>
+    <title>Blogs - Blogify</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -75,16 +75,18 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                 </div>
             </div>
         </div>
-        <div>
-        </div>
+
+        <!-- Blog List -->
         <div class="grid gap-4 grid-cols-1 md:grid-cols-4 mb-10">
             <?php if ($blogs) { ?>
                 <div class="md:col-span-3 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                     <?php foreach ($blogs as $blog) : ?>
-                        <div class="p-4 space-y-4 rounded-md bg-white text-gray-800 shadow-md h-[22rem] flex flex-col justify-between">
+                        <div class="p-4 space-y-4 group rounded-md bg-white text-gray-800 shadow-md h-[20rem] flex flex-col justify-between">
                             <div class="space-y-2">
-                                <div class="h-40">
-                                    <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full">
+                                <div class="h-40 overflow-hidden">
+                                    <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
+                                        <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
+                                    </a>
                                 </div>
                                 <div>
                                     <h3 class="text-lg leading-tight font-semibold">
@@ -105,7 +107,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                                         <?php endforeach ?>
                                     <?php endif ?>
                                 </div>
-                                <div class="flex items-center justify-between my-2">
+                                <div class="flex items-center justify-between">
                                     <p class="text-xs">
                                         Author -
                                         <strong>
@@ -115,9 +117,6 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                                     <p>
                                         <small class="font-semibold"><?= blogDate($blog["created_at"]) ?></small>
                                     </p>
-                                </div>
-                                <div class="mt-1 bg-gray-400 rounded-sm text-center py-1">
-                                    <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>" class="w-full block text-gray-800 text-sm font-semibold">View Details</a>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +174,6 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                     </form>
                 </div>
             </div>
-        </div>
         </div>
     </main>
 

@@ -6,8 +6,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $pwd = $_POST["pwd"];
 
+    $errors = array();
+
     try {
-        $errors = array();
 
         // Validate email format
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -22,46 +23,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // }
 
         // Validate password strength method 02
-        if (strlen($pwd) < 6) {
-            $errors["weak_password"] = "Password must be at least 6 characters long";
-            die();
-        }
+        // if (strlen($pwd) < 6) {
+        //     $errors["weak_password"] = "Password must be at least 6 characters long";
+        // }
 
         $loginContr = new LoginContr();
         $isInputEmpty = $loginContr->isInputEmpty($email, $pwd);
+
         if ($isInputEmpty) {
             $errors["empty_fields"] = "All fields are required";
-            die();
         }
+
         // Check if the user exist
         $isUserExist = $loginContr->isUserExist($email);
         if (!$isUserExist) {
-            $errors["wrong_credentials"] = "User does not exist!";
+            // echo "User does not exist";
+            $errors["not_found"] = "User does not exist!";
             header("Location: ../../login.php");
-            die();
         }
 
         // Check if the password is match
         $isMatch = $loginContr->isPasswordMatch($email, $pwd);
         if (!$isMatch) {
+            // echo "Incorrect password";
             $errors["wrong_credentials"] = "Incorrect password!";
             header("Location: ../../login.php");
-            die();
         }
 
         // Set errors to session
         if ($errors) {
             $_SESSION["login_errors"] = $errors;
             header("Location: ../../login.php");
-            die();
+        } else {
+            // Login the user
+            $loginContr->login($email);
+            $_SESSION["last_regenerate_time"] = time();
+            header("Location: ../../index.php");
         }
 
-        // Login the user
-        $loginContr->login($email);
-        $_SESSION["last_regenerate_time"] = time();
-
-
-        header("Location: ../../index.php");
         die();
     } catch (PDOException $error) {
         echo "Something went wrong with Login : " . $error->getMessage();

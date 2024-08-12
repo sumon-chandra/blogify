@@ -35,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Validate email format
         if (!$email) {
             $errors["invalid_email"] = "Invalid email format.";
-            die();
         }
 
         // Validate password strength
@@ -66,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($result) {
                     $avatar = $image_url;
                 } else {
+                    echo "Avatar Upload failed";
                     $errors["avatar_upload_failed"] = "Failed to upload profile picture.";
                 }
             }
@@ -80,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Display errors
         if ($errors) {
             $_SESSION["signup_errors"] = $errors;
+            header("Location:../../signup.php");
         }
     } catch (PDOException $error) {
         echo "Error accord with signup : " . $error->getMessage();

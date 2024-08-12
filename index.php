@@ -5,7 +5,7 @@ $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : "";
 $isLoggedId = $user_id;
 
 $userModel = new User();
-$user_role = $userModel->userRole($user_id);
+$user_role = $isLoggedId ? $userModel->userRole($user_id) : "";
 $admin = $user_role == "Admin" ? "Admin" : "";
 
 ?>

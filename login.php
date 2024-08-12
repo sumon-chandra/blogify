@@ -21,7 +21,7 @@ $isLoggedId = $user_id;
             <h1 class="text-2xl font-bold text-white"><a href="index.php">Blogify</a>
             </h1>
             <ul class="flex">
-                <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">Home</a></li>
+                <li class="mx-4"><a href="index.php" class="text-white hover:text-gray-300">Home</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">About</a></li>
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-300">Contact</a></li>
                 <li class="mx-4"><a href="blogs.php" class="text-white hover:text-gray-400">Blogs</a></li>
@@ -35,9 +35,27 @@ $isLoggedId = $user_id;
         </nav>
     </header>
     <main class="grid place-items-center">
-        <div class="mx-auto">
-            <h1 class="text-4xl font-bold text-center mt-12">Login to Your Blogify Account</h1>
-            <form action="includes/login/login.inc.php" method="POST" enctype="multipart/form-data" class="w-96 mx-auto mt-10 bg-white p-5 rounded-md">
+        <div class="w-96 mx-auto mt-20 bg-white p-5 rounded-md space-y-5">
+            <h1 class="text-lg font-bold text-center">Login to <a href="index.php">Blogify</a>
+            </h1>
+
+            <!-- Display errors -->
+            <?php if (!empty($errors)) : ?>
+                <div class="mt-4 text-center text-xs font-semibold text-red-600">
+                    <ul class="bg-red-100 py-1 rounded-sm">
+                        <?php foreach ($errors as $error) : ?>
+                            <li><?= $error; ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
+            <?php
+            if (isset($_SESSION["login_errors"])) {
+                unset($_SESSION["login_errors"]);
+            }
+            ?>
+            <form action="includes/login/login.inc.php" method="POST" enctype="multipart/form-data">
                 <div class="mb-4">
                     <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
                     <input type="email" id="email" name="email" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600" required autofocus>
@@ -49,14 +67,6 @@ $isLoggedId = $user_id;
                 <button type="submit" class="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Login</button>
                 <p class="text-center text-gray-400 mt-4">Don't have an account? <a href="signup.php" class="text-gray-800 hover:text-gray-700">Sign up</a></p>
             </form>
-            <!-- display the errors list with foreach -->
-            <?php if (!empty($errors)) : ?>
-                <ul class="text-red-500">
-                    <?php foreach ($errors as $error) : ?>
-                        <li><?php echo $error; ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
         </div>
     </main>
 </body>

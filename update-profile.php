@@ -11,7 +11,7 @@ if (!$isLoggedId) {
     exit();
 }
 $userModel = new User();
-$user_role = $userModel->userRole($user_id);
+$user_role = $isLoggedId ? $userModel->userRole($user_id) : "";
 $admin = $user_role == "Admin" ? "Admin" : "";
 
 $user = $userModel->getUserById($profile_id);

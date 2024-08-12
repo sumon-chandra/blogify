@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $blog->uploadThumbnail($thumbnail_url, $newBlogId);
         }
 
-        header("Location: ../../blogs.php");
+        header("Location: ../../profile.php");
         die();
     } catch (PDOException $error) {
         echo "Error to create a blog : " . $error->getMessage();

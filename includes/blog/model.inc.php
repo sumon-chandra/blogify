@@ -46,12 +46,13 @@ class BlogModel
         $query = "SELECT 
                     b.blog_id,
                     b.title,
+                    DATE_FORMAT(b.created_at, '%d %M %Y - %l:%i %p') AS created_at,
                     CONCAT(u.first_name, ' ', u.last_name) AS author_name,
                     u.user_id AS author_id
                     FROM blogs AS b 
                     LEFT JOIN users AS u 
                     ON u.user_id = b.author_id 
-                    WHERE b.status_id = '1';";
+                    WHERE b.status_id = '1' ORDER BY b.blog_id DESC;";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

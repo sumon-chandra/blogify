@@ -9,7 +9,7 @@ $isLoggedId = $user_id;
 $userModel = new User();
 $blogModel = new Blog();
 
-$user_role = $userModel->userRole($user_id);
+$user_role = $isLoggedId ? $userModel->userRole($user_id) : "";
 $admin = $user_role == "Admin" ? "Admin" : "";
 
 if (!$isLoggedId) {
@@ -108,6 +108,7 @@ $authors = $blogModel->getAuthors();
                     <tr>
                         <th class="px-4 py-3 text-lg font-bold text-gray-100 bg-gray-400">#</th>
                         <th class="px-4 py-3 text-lg font-bold text-gray-100 bg-gray-400">Title</th>
+                        <th class="px-4 py-3 text-lg font-bold text-gray-100 bg-gray-400">Create At</th>
                         <th class="px-4 py-3 text-lg font-bold text-gray-100 bg-gray-400">Author</th>
                         <th class="px-4 py-3 text-lg font-bold text-gray-100 bg-gray-400">Action</th>
                     </tr>
@@ -119,6 +120,7 @@ $authors = $blogModel->getAuthors();
                         <tr>
                             <td class="px-4 py-3 text-sm font-semibold text-gray-800 border-b border-black"> <?= $row_number++ ?></td>
                             <td class="px-4 py-3 text-sm font-semibold text-gray-800 border-b border-black"> <?= $blog["title"] ?></td>
+                            <td class="px-4 py-3 text-sm font-semibold text-gray-800 border-b border-black"> <?= $blog["created_at"] ?></td>
                             <td class="px-4 py-3 text-sm font-semibold text-gray-800 border-b border-black">
                                 <a href="profile.php?user_id=<?= $blog["author_id"] ?>"><?= $blog["author_name"] ?></a>
                             </td>
