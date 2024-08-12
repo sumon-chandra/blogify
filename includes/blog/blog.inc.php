@@ -7,6 +7,7 @@ class Blog
     {
         $query = "SELECT
                     b.*,
+                    CONCAT(u.first_name, ' ', u.last_name) AS author_name,
                     IF(
                         LENGTH(GROUP_CONCAT(t.tag_name)) > LENGTH(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2)),
                         CONCAT(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2), ' ...'), 
@@ -24,7 +25,9 @@ class Blog
                 LEFT JOIN blog_tags AS bt
                 ON b.blog_id = bt.blog_id
                 LEFT JOIN tags AS t 
-                ON bt.tag_id = t.tag_id";
+                ON bt.tag_id = t.tag_id
+                LEFT JOIN users AS u 
+                ON b.author_id = u.user_id";
 
         if (!empty($sort_by)) {
             if ($sort_by == "most_likes") {
@@ -85,10 +88,38 @@ class Blog
         return $blogs;
     }
 
-    public function getBlogsById($user_id)
+    public function totalBlogs()
     {
         $blogModel = new BlogModel();
-        $blogs = $blogModel->getAllBlogsByUserId($user_id);
+        $totalBlogs = $blogModel->totalBlogs();
+        return $totalBlogs;
+    }
+
+    public function pendingBlogs()
+    {
+        $blogModel = new BlogModel();
+        $pendingBlogs = $blogModel->pendingBlogs();
+        return $pendingBlogs;
+    }
+
+    function getPendingBlogs()
+    {
+        $blogModel = new BlogModel();
+        $pendingBlogs = $blogModel->getPendingBlogs();
+        return $pendingBlogs;
+    }
+
+    public function getApprovedBlogsById($user_id)
+    {
+        $blogModel = new BlogModel();
+        $blogs = $blogModel->getAllApprovedBlogsById($user_id);
+        return $blogs;
+    }
+
+    public function getDeniedBlogsById($user_id)
+    {
+        $blogModel = new BlogModel();
+        $blogs = $blogModel->getAllDeniedBlogsById($user_id);
         return $blogs;
     }
 
@@ -131,6 +162,13 @@ class Blog
         return $authors;
     }
 
+    public function totalAuthors()
+    {
+        $blogModel = new BlogModel();
+        $totalAuthors = $blogModel->totalAuthors();
+        return $totalAuthors;
+    }
+
     public function getAuthor($author_id)
     {
         $blogModel = new BlogModel();
@@ -156,5 +194,11 @@ class Blog
         $blogModel = new BlogModel();
         $blogModel->deleteBlog($blog_id);
         $blogModel->deleteBlogTags($blog_id);
+    }
+
+    public function changeBlogStatus($blog_id, $status_id)
+    {
+        $blogModel = new BlogModel();
+        $blogModel->changeBlogStatus($blog_id, $status_id);
     }
 }

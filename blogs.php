@@ -2,6 +2,7 @@
 require_once "includes/config.session.php";
 require_once "includes/blog/blog.inc.php";
 require_once "includes/blog/view.inc.php";
+require_once "includes/user/user.inc.php";
 
 $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : "";
 $isLoggedId = $user_id;
@@ -22,6 +23,9 @@ $blogs = $blogObject->getBlogs($blog_tag, $author_id, $sort_by, $start_date, $en
 $authors = $blogObject->getAuthors();
 $tags = $blogObject->getTags();
 
+$userModel = new User();
+$user_role = $userModel->userRole($user_id);
+$admin = $user_role == "Admin" ? "Admin" : "";
 ?>
 
 <!DOCTYPE html>
@@ -45,6 +49,9 @@ $tags = $blogObject->getTags();
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Contact</a></li>
                 <li class="mx-4"><a href="blogs.php" class="text-white hover:text-gray-400">Blogs</a></li>
                 <?php if ($isLoggedId) : ?>
+                    <?php if ($admin) : ?>
+                        <li class="mx-4"><a href="dashboard.php" class="text-white hover:text-gray-400">Dashboard</a></li>
+                    <?php endif; ?>
                     <li class="mx-4"><a href="profile.php" class="text-white hover:text-gray-400">Profile</a></li>
                     <li class="mx-4"><a href="includes/login/logout.inc.php" class="text-white hover:text-gray-400">Logout</a></li>
                 <?php else : ?>
@@ -70,11 +77,11 @@ $tags = $blogObject->getTags();
         </div>
         <div>
         </div>
-        <div class="grid gap-4 grid-cols-1 md:grid-cols-4">
+        <div class="grid gap-4 grid-cols-1 md:grid-cols-4 mb-10">
             <?php if ($blogs) { ?>
                 <div class="md:col-span-3 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                     <?php foreach ($blogs as $blog) : ?>
-                        <div class="p-4 space-y-4 rounded-md bg-white text-gray-800 shadow-md h-96 flex flex-col justify-between">
+                        <div class="p-4 space-y-4 rounded-md bg-white text-gray-800 shadow-md h-auto flex flex-col justify-between">
                             <div class="space-y-2">
                                 <div class="h-40">
                                     <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full">
@@ -85,12 +92,9 @@ $tags = $blogObject->getTags();
                                             <?= strlen($blog["title"]) <= 50 ? $blog["title"] : substr($blog["title"], 0, 50) . " ..." ?>
                                         </a>
                                     </h3>
-                                    <p class="text-gray-600 text-sm mt-2">
-                                        <?= strlen($blog["content"]) <= 100 ? $blog["content"] : substr($blog["content"], 0, 100) . " ..." ?>
-                                    </p>
                                 </div>
                             </div>
-                            <div class="text-right mt-3 flex flex-col">
+                            <div class="mt-3 flex flex-col">
                                 <!-- Display blog tags -->
                                 <div class="flex items-center flex-wrap">
                                     <?php if (isset($blog["tags"])) : ?>
@@ -101,22 +105,27 @@ $tags = $blogObject->getTags();
                                         <?php endforeach ?>
                                     <?php endif ?>
                                 </div>
-                                <div class="flex items-center justify-between">
+                                <div class="flex items-center justify-between my-2">
+                                    <p class="text-xs">
+                                        Author -
+                                        <strong>
+                                            <a href="profile.php?user_id=<?= $blog["author_id"] ?>" class="w-full text-gray-800 font-semibold"> <?= $blog["author_name"] ?></a>
+                                        </strong>
+                                    </p>
                                     <p>
                                         <small class="font-semibold"><?= blogDate($blog["created_at"]) ?></small>
                                     </p>
-
-                                    <p>
-                                        <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>" class="w-full text-gray-800 font-semibold">View Details</a>
-                                    </p>
+                                </div>
+                                <div class="mt-1 bg-gray-400 rounded-sm text-center py-1">
+                                    <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>" class="w-full block text-gray-800 text-sm font-semibold">View Details</a>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach ?>
                 </div>
             <?php } else { ?>
-                <div>
-                    <h3>There is no blogs!</h3>
+                <div class="md:col-span-3 grid place-items-center">
+                    <h3 class="text-xl font-bold text-gray-700">No blog found!</h3>
                 </div>
             <?php } ?>
             <div class="md:col-span-1">
@@ -167,7 +176,6 @@ $tags = $blogObject->getTags();
                 </div>
             </div>
         </div>
-        <div id="blogs"></div>
         </div>
     </main>
 

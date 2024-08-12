@@ -18,10 +18,11 @@ class BlogModel
     public function getAllBlogs($queryConditions, $queryParameters, $query, $sort_by)
     {
         if ($queryConditions) {
-            $query .= " WHERE " . implode(" AND ", $queryConditions);
+            $query .= " WHERE " . implode(" AND ", $queryConditions) . " GROUP BY b.blog_id ORDER BY";
+        } else {
+            $query .= " WHERE b.status_id = '3' GROUP BY b.blog_id ORDER BY";
         }
 
-        $query .= " GROUP BY b.blog_id ORDER BY";
 
         if (!empty($sort_by)) {
             if ($sort_by == "newly_created") {
@@ -35,20 +36,66 @@ class BlogModel
             $query .= " blog_id DESC";
         }
 
-        // echo "Query: " . $query;
-
         $stmt = $this->pdo->prepare($query);
         $stmt->execute($queryParameters);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAllBlogsByUserId($user_id)
+    public function getPendingBlogs()
     {
-        $query = "SELECT * FROM blogs WHERE author_id = :user_id;";
+        $query = "SELECT 
+                    b.blog_id,
+                    b.title,
+                    CONCAT(u.first_name, ' ', u.last_name) AS author_name,
+                    u.user_id AS author_id
+                    FROM blogs AS b 
+                    LEFT JOIN users AS u 
+                    ON u.user_id = b.author_id 
+                    WHERE b.status_id = '1';";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function totalBlogs()
+    {
+        $query = "SELECT COUNT(*) as total FROM blogs WHERE status_id = '3';";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+
+    public function totalAuthors()
+    {
+        $query = "SELECT COUNT(*) as total FROM users WHERE role_id = '2';";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    public function getAllApprovedBlogsById($user_id)
+    {
+        $query = "SELECT * FROM blogs WHERE author_id = :user_id AND status_id = '3';";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllDeniedBlogsById($user_id)
+    {
+        $query = "SELECT * FROM blogs WHERE author_id = :user_id AND status_id = '2';";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function pendingBlogs()
+    {
+        $query = "SELECT COUNT(*) AS total FROM blogs WHERE status_id = '1';";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC)["total"];
     }
 
     public function storeNewBlog($title, $content, $author_id)
@@ -97,7 +144,7 @@ class BlogModel
         $query = "SELECT
                         b.*,
                         CONCAT(u.first_name, ' ', u.last_name) AS author_name,
-                        u.profile_picture,
+                        u.avatar,
                         COALESCE(l.total_likes, 0) AS total_likes,
                         GROUP_CONCAT(DISTINCT t.tag_name SEPARATOR ', ') AS tags
                     FROM blogs AS b
@@ -110,7 +157,7 @@ class BlogModel
                     LEFT JOIN blog_tags AS bt ON b.blog_id = bt.blog_id
                     LEFT JOIN tags AS t ON bt.tag_id = t.tag_id
                     WHERE b.blog_id = :blog_id
-                    GROUP BY b.blog_id, u.first_name, u.last_name, u.profile_picture, l.total_likes;";
+                    GROUP BY b.blog_id, u.first_name, u.last_name, u.avatar, l.total_likes;";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':blog_id', $blog_id);
         $stmt->execute();
@@ -120,15 +167,19 @@ class BlogModel
     public function getAuthors()
     {
         $query = "SELECT 
-                    
                     CONCAT(u.first_name , ' ', u.last_name) AS author_name,
                     u.user_id AS author_id,
-                    r.role
+                    u.email,
+                    u.avatar AS avatar,
+                    r.role,
+                    g.gender
                     FROM users AS u 
                     INNER JOIN roles AS r 
                     ON r.role_id = u.role_id
+                    INNER JOIN genders AS g
+                    ON g.gender_id = u.gender_id
                     WHERE u.role_id = '2'
-                    ORDER BY first_name ASC;";
+                    ORDER BY u.created_at DESC;";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -142,7 +193,7 @@ class BlogModel
                     u.email,
                     u.updated_at,
                     u.user_id AS author_id,
-                    u.profile_picture,
+                    u.avatar,
                     g.gender,
                     r.role
                 FROM
@@ -192,6 +243,16 @@ class BlogModel
     {
         $query = "DELETE FROM blog_tags WHERE blog_id = :blog_id;";
         $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':blog_id', $blog_id);
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
+    public function changeBlogStatus($blog_id, $status_id)
+    {
+        $query = "UPDATE blogs SET status_id = :status_id WHERE blog_id = :blog_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':status_id', $status_id);
         $stmt->bindParam(':blog_id', $blog_id);
         $stmt->execute();
         return $stmt->rowCount();

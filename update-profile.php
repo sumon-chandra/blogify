@@ -11,6 +11,8 @@ if (!$isLoggedId) {
     exit();
 }
 $userModel = new User();
+$user_role = $userModel->userRole($user_id);
+$admin = $user_role == "Admin" ? "Admin" : "";
 
 $user = $userModel->getUserById($profile_id);
 $user_id = isset($user["user_id"]) ? $user["user_id"] : '';
@@ -43,6 +45,9 @@ $gender_id = isset($user["gender_id"]) ? $user["gender_id"] : '';
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Contact</a></li>
                 <li class="mx-4"><a href="blogs.php" class="text-white hover:text-gray-400">Blogs</a></li>
                 <?php if ($isLoggedId) : ?>
+                    <?php if ($admin) : ?>
+                        <li class="mx-4"><a href="dashboard.php" class="text-white hover:text-gray-400">Dashboard</a></li>
+                    <?php endif; ?>
                     <li class="mx-4"><a href="profile.php" class="text-white hover:text-gray-400">Profile</a></li>
                     <li class="mx-4"><a href="includes/login/logout.inc.php" class="text-white hover:text-gray-400">Logout</a></li>
                 <?php else : ?>
@@ -80,8 +85,8 @@ $gender_id = isset($user["gender_id"]) ? $user["gender_id"] : '';
                 </div>
             </div>
             <div class="mb-4">
-                <label for="profile_picture" class="block text-gray-700 text-sm font-bold mb-2">Profile Picture</label>
-                <input type="file" id="profile_picture" name="profile_picture" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600">
+                <label for="avatar" class="block text-gray-700 text-sm font-bold mb-2">Profile Picture</label>
+                <input type="file" id="avatar" name="avatar" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600">
             </div>
             <button type="submit" class="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Update</button>
         </form>

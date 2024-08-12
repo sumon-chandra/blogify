@@ -1,7 +1,13 @@
 <?php
 require_once "includes/config.session.php";
+require_once "includes/user/user.inc.php";
 $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : "";
 $isLoggedId = $user_id;
+
+$userModel = new User();
+$user_role = $userModel->userRole($user_id);
+$admin = $user_role == "Admin" ? "Admin" : "";
+
 ?>
 
 <!DOCTYPE html>
@@ -25,6 +31,9 @@ $isLoggedId = $user_id;
                 <li class="mx-4"><a href="#" class="text-white hover:text-gray-400">Contact</a></li>
                 <li class="mx-4"><a href="blogs.php" class="text-white hover:text-gray-400">Blogs</a></li>
                 <?php if ($isLoggedId) : ?>
+                    <?php if ($admin) : ?>
+                        <li class="mx-4"><a href="dashboard.php" class="text-white hover:text-gray-400">Dashboard</a></li>
+                    <?php endif; ?>
                     <li class="mx-4"><a href="profile.php" class="text-white hover:text-gray-400">Profile</a></li>
                     <li class="mx-4"><a href="includes/login/logout.inc.php" class="text-white hover:text-gray-400">Logout</a></li>
                 <?php else : ?>

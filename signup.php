@@ -61,8 +61,8 @@
                     </div>
                 </div>
                 <div class="mb-4">
-                    <label for="profile_picture" class="block text-gray-700 text-sm font-bold mb-2">Profile Picture</label>
-                    <input type="file" id="profile_picture" name="profile_picture" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600">
+                    <label for="avatar" class="block text-gray-700 text-sm font-bold mb-2">Profile Picture</label>
+                    <input type="file" id="avatar" name="avatar" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:border-gray-600">
                 </div>
                 <button type="submit" class="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Signup</button>
                 <p class="text-center text-gray-400 mt-4">Already have an account? <a href="login.php" class="text-gray-800 hover:text-gray-700">Login</a></p>

@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $pwd = $_POST['pwd'];
     $dob = $_POST['dob'];
     $gender_id = $_POST['gender'];
-    $profile_picture = $_FILES['profile_picture']["name"];
+    $avatar_file = $_FILES['avatar']["name"];
 
     $errors = array();
 
@@ -52,11 +52,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
 
         // Upload profile picture
-
+        $avatar = null;
+        if ($avatar_file) {
+            $allowed = ["jpg", "png", "jpeg", "gif", "webp"];
+            $temp_name = $_FILES["avatar"]["tmp_name"];
+            $ext = strtolower(pathinfo($avatar_file, PATHINFO_EXTENSION));
+            if (!in_array($ext, $allowed)) {
+                $errors["invalid_avatar_format"] = "Invalid profile picture format. Only JPG, PNG, JPEG, GIF, and WebP are allowed.";
+            } else {
+                $image_url = "avatar_" . rand(1, 20) . "_" . $avatar_file;
+                $upload_path = "../../uploads/avatars/" . $image_url;
+                $result = move_uploaded_file($temp_name, $upload_path);
+                if ($result) {
+                    $avatar = $image_url;
+                } else {
+                    $errors["avatar_upload_failed"] = "Failed to upload profile picture.";
+                }
+            }
+        }
 
         // If no errors, save user data to the database
         if (empty($errors)) {
-            $signupModel->signup($first_name, $last_name, $email, $hashedPwd, $dob, $gender_id, $profile_picture);
+            $signupModel->signup($first_name, $last_name, $email, $hashedPwd, $dob, $gender_id, $avatar);
             header("Location: ../../login.php");
         }
 

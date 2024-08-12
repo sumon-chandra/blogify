@@ -53,16 +53,31 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateUser($user_id, $first_name, $last_name, $dob, $gender_id)
+    public function updateUser($user_id, $first_name, $last_name, $dob, $gender_id, $avatar)
     {
-        $query = "UPDATE users SET first_name = :first_name, last_name = :last_name, gender_id = :gender_id, dob= :dob WHERE user_id = :user_id;";
+        $query = "UPDATE users SET first_name = :first_name, last_name = :last_name, gender_id = :gender_id, dob= :dob, avatar = :avatar WHERE user_id = :user_id;";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
         $stmt->bindParam(':first_name', $first_name);
         $stmt->bindParam(':last_name', $last_name);
         $stmt->bindParam(':dob', $dob);
         $stmt->bindParam(':gender_id', $gender_id);
+        $stmt->bindParam(':avatar', $avatar);
         $stmt->execute();
         return $stmt->rowCount();
+    }
+
+    public function userRole($user_id)
+    {
+        $query = "SELECT 
+                    r.role
+                    FROM users AS u 
+                    INNER JOIN roles AS r 
+                    ON u.role_id = r.role_id
+                    WHERE u.user_id = :user_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC)['role'];
     }
 }
