@@ -40,13 +40,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        $allowed = ["jpg", "png", "gif", "jpeg", "webp"];
-        $image_temp = $_FILES["blog_thumbnail"]["tmp_name"];
-        $image_ext = strtolower(pathinfo($blog_thumbnail, PATHINFO_EXTENSION));
-        $thumbnail_url = "thumbnail_" . $newBlogId . "_" . $blog_thumbnail;
-        $upload_path = "../../uploads/blogs/" . $thumbnail_url;
-
-        if ($blog_thumbnail) {
+        if (!empty($blog_thumbnail)) {
+            $allowed = ["jpg", "png", "gif", "jpeg", "webp"];
+            $image_temp = $_FILES["blog_thumbnail"]["tmp_name"];
+            $image_ext = strtolower(pathinfo($blog_thumbnail, PATHINFO_EXTENSION));
+            $thumbnail_url = "thumbnail_" . $newBlogId . "_" . $blog_thumbnail;
+            $upload_path = "../../uploads/blogs/" . $thumbnail_url;
             if (!in_array($image_ext, $allowed)) {
                 $errors["invalid_thumb_format"] = "Invalid thumbnail format. Only JPG, PNG, GIF, and JPEG are allowed.";
                 die();

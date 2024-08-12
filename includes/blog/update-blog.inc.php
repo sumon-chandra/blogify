@@ -25,17 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $blog = $blogModel->getBlogById($blog_id);
 
         $blog_thumbnail_db = isset($blog["thumbnail"]) ? $blog["thumbnail"] : "";
-        $allowed = ["jpg", "png", "gif", "jpeg"];
-        $image_temp = $_FILES["blog_thumbnail"]["tmp_name"];
-        $image_ext = strtolower(pathinfo($blog_thumbnail, PATHINFO_EXTENSION));
-        $thumbnail_url = "thumbnail_" . $blog_id . "_" . $blog_thumbnail;
-        $upload_path = "../../uploads/blogs/" . $thumbnail_url;
+        if (!empty($blog_thumbnail)) {
+            $allowed = ["jpg", "png", "gif", "jpeg"];
+            $image_temp = $_FILES["blog_thumbnail"]["tmp_name"];
+            $image_ext = strtolower(pathinfo($blog_thumbnail, PATHINFO_EXTENSION));
+            $thumbnail_url = "thumbnail_" . $blog_id . "_" . $blog_thumbnail;
+            $upload_path = "../../uploads/blogs/" . $thumbnail_url;
 
-        if (!in_array($image_ext, $allowed)) {
-            echo "Invalid thumbnail format. Only JPG, PNG, GIF, and JPEG are allowed.";
-            exit();
-        }
-        if ($blog_thumbnail) {
+            if (!in_array($image_ext, $allowed)) {
+                echo "Invalid thumbnail format. Only JPG, PNG, GIF, and JPEG are allowed.";
+                exit();
+            }
             if ($blog_thumbnail_db) {
                 $updateResult = $blogModel->updateBlogThumbnail($blog_id, $thumbnail_url);
                 unlink("../../uploads/blogs/" . $blog_thumbnail_db);

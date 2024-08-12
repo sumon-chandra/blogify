@@ -10,8 +10,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $avatar_file = $_FILES["avatar"]["name"];
 
     try {
-        $avatar = null;
-        if ($avatar_file) {
+        $userModel = new User();
+        $avatar = $userModel->getUserById($user_id)["avatar"];
+        if (!empty($avatar_file)) {
             $temp_name = $_FILES["avatar"]["tmp_name"];
             $ext = pathinfo($avatar_file, PATHINFO_EXTENSION);
             $allowed = ["jpg", "png", "jpeg", "webp"];
@@ -28,14 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        $userModel = new User();
         $updateResult = $userModel->updateUser($user_id, $first_name, $last_name, $dob, $gender_id, $avatar);
 
-        if ($updateResult) {
-            header("Location: ../../profile.php");
-        } else {
-            echo "Failed to update user.";
-        }
+        header("Location: ../../profile.php");
     } catch (PDOException $error) {
         echo "Error updating user : " . $error->getMessage();
     }
