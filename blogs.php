@@ -111,7 +111,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                                     <p class="text-xs">
                                         Author -
                                         <strong>
-                                            <a href="profile.php?user_id=<?= $blog["author_id"] ?>" class="w-full text-gray-800 font-semibold"> <?= $blog["author_name"] ?></a>
+                                            <a href="user.php?user_id=<?= $blog["author_id"] ?>" class="w-full text-gray-800 font-semibold"> <?= $blog["author_name"] ?></a>
                                         </strong>
                                     </p>
                                     <p>

@@ -16,7 +16,7 @@ $thumbnail = "assets/dummy.jpg";
 $dateTime = new DateTime($blog["created_at"]);
 $formattedDate = $dateTime->format("F d Y");
 
-$user_role = $userObject->userRole($user_id);
+$user_role =  $isLoggedId ? $userObject->userRole($user_id) : "";
 $admin = $user_role == "Admin" ? "Admin" : "";
 
 ?>

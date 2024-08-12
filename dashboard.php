@@ -122,7 +122,7 @@ $authors = $blogModel->getAuthors();
                             <td class="px-4 py-3 text-sm font-semibold text-gray-800 border-b border-black"> <?= $blog["title"] ?></td>
                             <td class="px-4 py-3 text-sm font-semibold text-gray-800 border-b border-black"> <?= $blog["created_at"] ?></td>
                             <td class="px-4 py-3 text-sm font-semibold text-gray-800 border-b border-black">
-                                <a href="profile.php?user_id=<?= $blog["author_id"] ?>"><?= $blog["author_name"] ?></a>
+                                <a href="user.php?user_id=<?= $blog["author_id"] ?>"><?= $blog["author_name"] ?></a>
                             </td>
                             <td class="px-4 py-3 text-sm font-semibold text-gray-800 border-b border-black space-x-4">
                                 <button onclick="confirmation('Approve')" class="text-blue-600 hover:text-blue-400">
@@ -160,7 +160,7 @@ $authors = $blogModel->getAuthors();
                     foreach ($authors as $author) : ?>
                         <tr>
                             <td class="px-4 py-2 text-sm font-semibold text-gray-800 border-b border-black">
-                                <a href="profile.php?user_id=<?= $author["author_id"] ?>">
+                                <a href="user.php?user_id=<?= $author["author_id"] ?>">
                                     <?php if (isset($author["avatar"])) : ?>
                                         <img src="images/avatars/<?= $author["avatar"] ?>" alt="Author avatar" class="size-8 rounded-full object-cover">
                                     <?php else : ?>
