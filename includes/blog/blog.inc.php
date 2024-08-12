@@ -159,6 +159,15 @@ class Blog
     {
         $blogModel = new BlogModel();
         $blog = $blogModel->getSingleBlog($blog_id);
+
+        // Manage blog view count
+        if (!isset($_COOKIE["view_count"])) {
+            setcookie("view_count", $blog["blog_id"], time() + (86400 * 30), "/"); // 86400 = 1 day (The count will increase every 30 days)
+            $blogModel->updateViewCount($blog_id);
+        } else if (isset($_COOKIE["view_count"]) && $_COOKIE["view_count"] != $blog["blog_id"]) {
+            setcookie("view_count", $blog["blog_id"], time() + (86400 * 30), "/");
+            $blogModel->updateViewCount($blog_id);
+        }
         return $blog;
     }
 

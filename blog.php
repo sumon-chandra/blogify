@@ -83,6 +83,9 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                 <p class="text-gray-600">Created by <strong><?= $blog["author_name"]; ?></strong></p>
             </div>
             <div>
+                <p>Total <strong><?= $blog["total_views"] ?></strong> reader reads this blog.</p>
+            </div>
+            <div>
                 <a href="#" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700">Like <strong><?= $blog["total_likes"] ?></strong></a>
                 <a href="#" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700 mx-4">Comment (0)</a>
                 <a href="#" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700">Share</a>

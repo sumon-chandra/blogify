@@ -274,4 +274,13 @@ class BlogModel
         $stmt->execute();
         return $stmt->rowCount();
     }
+
+    public function updateViewCount($blog_id)
+    {
+        $query = "UPDATE blogs SET total_views = total_views + 1 WHERE blog_id = :blog_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':blog_id', $blog_id);
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
 }
