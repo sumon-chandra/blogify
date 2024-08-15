@@ -79,7 +79,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
         <!-- Blog List -->
         <div class="grid gap-4 grid-cols-1 md:grid-cols-4 mb-10">
             <?php if ($blogs) { ?>
-                <div class="md:col-span-3 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                <div id="blogs" class="md:col-span-3 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                     <?php foreach ($blogs as $blog) : ?>
                         <div class="p-4 space-y-4 group rounded-md bg-white text-gray-800 shadow-md h-[20rem] flex flex-col justify-between">
                             <div class="space-y-2">

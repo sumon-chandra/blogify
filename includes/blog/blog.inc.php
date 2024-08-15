@@ -217,4 +217,17 @@ class Blog
         $blogModel = new BlogModel();
         $blogModel->changeBlogStatus($blog_id, $status_id);
     }
+
+    public function addComment($comment_text, $user_id, $blog_id)
+    {
+        $blogModel = new BlogModel();
+        $blogModel->insertComments($comment_text, $user_id, $blog_id);
+    }
+
+    public function getComments($blog_id)
+    {
+        $blogModel = new BlogModel();
+        $data =  $blogModel->selectComments($blog_id);
+        return $data;
+    }
 }

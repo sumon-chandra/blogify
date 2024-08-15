@@ -283,4 +283,36 @@ class BlogModel
         $stmt->execute();
         return $stmt->rowCount();
     }
+
+    public function insertComments($comment_text, $user_id, $blog_id)
+    {
+        $query = "INSERT INTO comments (comment_text, user_id, blog_id) VALUES (:comment_text, :user_id, :blog_id);";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":comment_text", $comment_text);
+        $stmt->bindParam(":user_id", $user_id);
+        $stmt->bindParam(":blog_id", $blog_id);
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
+    public function selectComments($blog_id)
+    {
+        $query = "SELECT 
+                    c.comment_id,
+                    c.comment_text,
+                    c.created_at,
+                    c.user_id, 
+                    DATE_FORMAT(c.created_at, '%d ' '%b ' ' %Y') AS created_at,
+                    CONCAT(u.first_name, ' ', u.last_name) AS comment_author,
+                    u.avatar AS author_avatar
+                    FROM comments AS c 
+                    LEFT JOIN users AS u 
+                    ON u.user_id = c.user_id
+                    WHERE c.blog_id = :blog_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":blog_id", $blog_id);
+        $stmt->execute();
+        $allComments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $allComments;
+    }
 }

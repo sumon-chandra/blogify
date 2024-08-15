@@ -10,7 +10,7 @@ try {
     if ($blog_status == "approve") {
         $status_id = 3;
     }
-    if ($blog_status == "deny") {
+    if ($blog_status == "denied") {
         $status_id = 2;
     }
     // echo "Blog status: " . $blog_status;

@@ -128,8 +128,8 @@ $user_name = $user["first_name"] . " " . $user["last_name"];
         <?php else : ?>
             <div class="grid place-items-center">
                 <div class="py-8 text-center text-gray-500 mt-10">
-                    <h1 class="text-xl font-bold">You haven't posted any blogs yet.</h1>
-                    <p>Click the "Create New Blog" button to start writing your first blog.</p>
+                    <h1 class="text-xl font-bold">You haven't any pending blogs.</h1>
+                    <p>Click the "Create New Blog" button to start writing a blog.</p>
                     <div class="mt-7">
                         <a href="create-blog.php" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md">Create New Blog</a>
                     </div>

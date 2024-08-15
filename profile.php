@@ -201,7 +201,7 @@ $user_name = $user["first_name"] . " " . $user["last_name"];
                                 <div class="flex flex-col justify-between">
                                     <div>
                                         <h3 class="text-lg font-semibold">
-                                            <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
+                                            <a href="users-blogs.php?user_id=<?= $user_id ?>&status=denied">
                                                 <?= strlen($blog["title"]) <= 50 ? $blog["title"] : substr($blog["title"], 0, 50) . " ..." ?>
                                             </a>
                                         </h3>
