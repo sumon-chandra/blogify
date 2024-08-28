@@ -63,10 +63,10 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                             $('#load-more-div').text(data.message)
                         }
                     },
-                    error: function() {
+                    error: function(e) {
                         $('#failed-message').removeClass('hidden');
                         $('#failed-message').addClass('block');
-                        $('#failed-message').text("Something went wrong. Please try again!");
+                        $('#failed-message').text("Something went wrong. Please try again!", );
                     }
                 })
             })
@@ -162,10 +162,10 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                         <?php endforeach; ?>
                     </div>
                     <?php if (count($blogs) >= 3) : ?>
-                        <div id="load-more-div" class="flex items-center justify-center mt-4">
-                            <button id="btn-more" data-last_blog_id="<?= $last_blog_id ?>" class="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-md w-52">Load More</button>
+                        <div id="load-more-div" class="flex items-center justify-center flex-col mt-4">
                             <!-- Failed Message -->
                             <div id="failed-message" class="text-center text-sm font-semibold"></div>
+                            <button id="btn-more" data-last_blog_id="<?= $last_blog_id ?>" class="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-md w-52">Load More</button>
                         </div>
                     <?php endif; ?>
                 </div>

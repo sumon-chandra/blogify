@@ -185,6 +185,18 @@ class Blog
         $blogModel->storeBlogTag($tag_id, $newBlogId);
     }
 
+    public function likeBlog($blog_id, $user_id)
+    {
+        $blogModel = new BlogModel();
+        return $blogModel->storeBlogLike($blog_id, $user_id);
+    }
+
+    public function getTotalLikes($blog_id, $user_id)
+    {
+        $blogModel = new BlogModel();
+        return $blogModel->getTotalLikes($blog_id, $user_id);
+    }
+
     public function uploadThumbnail($thumbnail, $blog_id)
     {
         $blogModel = new BlogModel();

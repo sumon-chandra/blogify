@@ -12,6 +12,8 @@ $blogObject = new Blog();
 $userObject = new User();
 $blog = $blogObject->getBlogById($blog_id);
 $comments = $blogObject->getComments($blog_id);
+$total_likes = $blogObject->getTotalLikes($blog_id, $user_id);
+
 $tags = explode(",", $blog['tags']);
 $related_blogs = [];
 
@@ -44,6 +46,34 @@ $admin = $user_role == "Admin" ? "Admin" : "";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $blog["title"] ?> - Blogify</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script>
+        // Insert like 
+        $(document).ready(function() {
+            $("#like-btn").click(function() {
+                let blog_id = $(this).data("blog_id");
+                let user_id = $(this).data("user_id");
+
+                $.ajax({
+                    url: "handle-likes.php",
+                    type: "POST",
+                    data: {
+                        blog_id,
+                        user_id
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        $('#like-btn').attr('disabled', 'disabled');
+                        $('#likes').text(response?.data?.total_likes)
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 
 <body class="min-h-screen w-full bg-gray-200">
@@ -102,34 +132,42 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                 <p><strong><?= $blog["total_views"] ?></strong> People reads the blog.</p>
             </div>
             <div>
-                <a href="#" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700">Like <strong><?= $blog["total_likes"] ?></strong></a>
-                <a href="#" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700">Share</a>
+                <?php if ($total_likes["has_liked"]) : ?>
+                    <?= displayLikes($total_likes) ?>
+                <?php else : ?>
+                    <button id="like-btn" disabled="<?= $user_id ?>" data-blog_id="<?= $blog_id ?>" data-user_id="<?= $user_id ?>" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700 disabled:bg-gray-700">Like <strong id="likes"><?= $total_likes["total_likes"] ?></strong></button>
+                <?php endif; ?>
             </div>
         </div>
 
         <!-- Comment Section -->
         <section>
-            <h3 class="text-lg font-bold">Leave a comment</h3>
-            <div class="mt-5">
-                <form action="includes/blog/comments.inc.php" method="post" enctype="multipart/form-data" class="flex flex-col items-end justify-center">
-                    <input type="hidden" name="user_id" value="<?= $user_id ?>">
-                    <input type="hidden" name="blog_id" value="<?= $blog_id ?>">
-                    <textarea name="comment" id="comment" cols="30" rows="2" placeholder="Write a comment" class="p-4 bg-white rounded-sm border w-full"></textarea>
-                    <button class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700 mt-4">Add Comment</button>
-                </form>
-            </div>
-            <!-- Comment List -->
-            <?php if (!empty($comments)) : ?>
-                <h3 class="text-lg font-bold">Comments</h3>
-                <!-- <div>
-                    <form action="includes/blog/comments.inc.php" method="get">
-                        <select name="sort_by" id="sort_by" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700 mt-4">
-                            <option value="">Sort By</option>
-                            <option value="new">New</option>
-                            <option value="old">Old</option>
-                        </select>
+            <?php if (!empty($user_id)) : ?>
+                <h3 class="text-lg font-bold">Leave a comment</h3>
+                <div class="mt-5">
+                    <form action="includes/blog/comments.inc.php" method="post" enctype="multipart/form-data" class="flex flex-col items-end justify-center">
+                        <input type="hidden" name="user_id" value="<?= $user_id ?>">
+                        <input type="hidden" name="blog_id" value="<?= $blog_id ?>">
+                        <textarea name="comment" id="comment" cols="30" rows="2" placeholder="Write a comment" class="p-4 bg-white rounded-sm border w-full"></textarea>
+                        <button class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700 mt-4">Add Comment</button>
                     </form>
-                </div> -->
+                </div>
+            <?php endif ?>
+            <?php if (!empty($comments)) : ?>
+                <div class="flex items-end justify-between">
+                    <h3 class="text-lg font-bold">Comments</h3>
+                    <div>
+                        <form action="includes/blog/comments.inc.php" method="get">
+                            <select name="sort_by" id="sort_by" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700 mt-4">
+                                <option value="">Sort By</option>
+                                <option value="new">New</option>
+                                <option value="old">Old</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Comment List -->
                 <div class="mt-4 p-3 bg-white">
                     <?php foreach ($comments as $comment) : ?>
                         <div class="p-4 mt-2 border border-gray-300 text-gray-800">
@@ -164,33 +202,18 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                 <h3 class="text-lg font-bold">You may also like these blogs</h3>
                 <div class="grid gap-4 grid-cols-1 md:grid-cols-2">
                     <?php foreach ($related_blogs as $blog) : ?>
-                        <div class="p-4 rounded-md bg-white text-gray-800 shadow-md h-auto flex justify-between">
-                            <div class="flex items-start gap-4">
-                                <div class="size-16">
-                                    <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-auto">
-                                </div>
-                                <div class="flex flex-col justify-between">
-                                    <div>
-                                        <h3 class="text-sm font-semibold">
-                                            <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
-                                                <?= strlen($blog["title"]) <= 50 ? $blog["title"] : substr($blog["title"], 0, 50) . " ..." ?>
-                                            </a>
-                                        </h3>
+                        <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
+                            <div class="p-4 rounded-md bg-white text-gray-800 shadow-md h-auto flex justify-between">
+                                <div class="flex items-start gap-4">
+                                    <div class="size-16">
+                                        <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-auto">
                                     </div>
-                                    <div class="flex flex-col">
-                                        <div class="flex items-center flex-wrap">
-                                            <?php if (isset($blog["tags"])) : ?>
-                                                <?php foreach (explode(",", $blog["tags"]) as $tag) : ?>
-                                                    <a href="blogs.php?tag=<?= $tag ?>">
-                                                        <strong class="inline-block text-gray-500 px-2 py-1 text-xs cursor-pointer">#<?= $tag ?></strong>
-                                                    </a>
-                                                <?php endforeach ?>
-                                            <?php endif ?>
-                                        </div>
-                                    </div>
+                                    <h3 class="text-sm font-semibold">
+                                        <?= strlen($blog["title"]) <= 30 ? $blog["title"] : substr($blog["title"], 0, 30) . " ..." ?>
+                                    </h3>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     <?php endforeach; ?>
                 </div>
             </section>

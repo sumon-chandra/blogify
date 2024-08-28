@@ -84,3 +84,34 @@ function displayLoadMoreBtn($blog_id)
     ";
     return $result;
 }
+
+function displayLikes($total_likes)
+{
+    $result = "";
+    if ($total_likes["has_liked"] && ($total_likes["total_likes"] == 1)) {
+        $result = "
+            <div id='like-div' class='bg-gray-300 text-gray-800 px-4 py-1 rounded-md'>
+                <strong class='text-sm'>Only you liked this blog</strong>
+            </div>
+        ";
+    }
+    if ($total_likes["has_liked"] && ($total_likes["total_likes"]) > 1) {
+        $result = "
+            <div id='like-div' class='bg-gray-300 text-gray-800 px-4 py-1 rounded-md'>
+                You and <strong class='text-sm'>" . ($total_likes["total_likes"] - 1) . "</strong> others likes the blog.
+            </div>
+                ";
+    }
+    return $result;
+}
+
+function toastMessage($message)
+{
+    $result = "";
+    $result = "
+        <div id='toast-message' class='fixed top-10 left-5 z-50 bg-white text-gray-800 px-4 py-2 rounded-md shadow-md'>
+            <p>" . $message . "</p>
+        </div>
+    ";
+    return $result;
+}
