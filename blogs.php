@@ -1,7 +1,6 @@
 <?php
 require_once "includes/config.session.php";
 require_once "includes/blog/blog.inc.php";
-require_once "includes/blog/view.inc.php";
 require_once "includes/user/user.inc.php";
 
 $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : "";
@@ -19,7 +18,8 @@ $search_query = isset($_GET["s"]) ? $_GET["s"] : "";
 $blogObject = new Blog();
 
 // Get Blogs, Authors, Tags
-$blogs = $blogObject->getBlogs($blog_tag, $author_id, $sort_by, $start_date, $end_date, $search_query);
+$offset = isset($_GET["offset"]) ? intval($_GET["offset"]) : "";
+$blogs = $blogObject->getBlogs($blog_tag, $author_id, $sort_by, $start_date, $end_date, $search_query, $offset);
 $authors = $blogObject->getAuthors();
 $tags = $blogObject->getTags();
 
@@ -36,6 +36,42 @@ $admin = $user_role == "Admin" ? "Admin" : "";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blogs - Blogify</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <!-- <script src="js/load-more-blogs.js"></script> -->
+    <script>
+        $(document).ready(function() {
+            $(document).on('click', '#btn-more', function() {
+                let last_blog_id = $(this).data('last_blog_id');
+                console.log({
+                    last_blog_id
+                });
+
+                $('#btn-more').text('Loading....');
+                $.ajax({
+                    url: "more-blogs.php",
+                    method: 'POST',
+                    data: {
+                        last_blog_id
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        if (data.success) {
+                            $('#blogs').append(data.data);
+                            $('#load-more-div').html(data.load_more_btn);
+                        } else {
+                            $('#btn-more').remove();
+                            $('#load-more-div').text(data.message)
+                        }
+                    },
+                    error: function() {
+                        $('#failed-message').removeClass('hidden');
+                        $('#failed-message').addClass('block');
+                        $('#failed-message').text("Something went wrong. Please try again!");
+                    }
+                })
+            })
+        })
+    </script>
 </head>
 
 <body class="min-h-screen w-full bg-gray-200">
@@ -79,49 +115,61 @@ $admin = $user_role == "Admin" ? "Admin" : "";
         <!-- Blog List -->
         <div class="grid gap-4 grid-cols-1 md:grid-cols-4 mb-10">
             <?php if ($blogs) { ?>
-                <div id="blogs" class="md:col-span-3 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-                    <?php foreach ($blogs as $blog) : ?>
-                        <div class="p-4 space-y-4 group rounded-md bg-white text-gray-800 shadow-md h-[20rem] flex flex-col justify-between">
-                            <div class="space-y-2">
-                                <div class="h-40 overflow-hidden">
-                                    <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
-                                        <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
-                                    </a>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg leading-tight font-semibold">
+                <?php $last_blog_id = ""; ?>
+                <div class="md:col-span-3 space-y-4">
+                    <div id="blogs" class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                        <?php foreach ($blogs as $blog) : ?>
+                            <div class="p-4 space-y-4 group rounded-md bg-white text-gray-800 shadow-md h-[20rem] flex flex-col justify-between">
+                                <div class="space-y-2">
+                                    <div class="h-40 overflow-hidden">
                                         <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
-                                            <?= strlen($blog["title"]) <= 50 ? $blog["title"] : substr($blog["title"], 0, 50) . " ..." ?>
+                                            <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
                                         </a>
-                                    </h3>
-                                </div>
-                            </div>
-                            <div class="mt-3 flex flex-col">
-                                <!-- Display blog tags -->
-                                <div class="flex items-center flex-wrap">
-                                    <?php if (isset($blog["tags"])) : ?>
-                                        <?php foreach (explode(",", $blog["tags"]) as $tag) : ?>
-                                            <a href="blogs.php?tag=<?= $tag ?>">
-                                                <strong class="inline-block text-gray-500 px-2 py-1 text-xs cursor-pointer">#<?= $tag ?></strong>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg leading-tight font-semibold">
+                                            <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
+                                                <?= strlen($blog["title"]) <= 50 ? $blog["title"] : substr($blog["title"], 0, 50) . " ..." ?>
                                             </a>
-                                        <?php endforeach ?>
-                                    <?php endif ?>
+                                        </h3>
+                                    </div>
                                 </div>
-                                <div class="flex items-center justify-between">
-                                    <p class="text-xs">
-                                        Author -
-                                        <strong>
-                                            <a href="user.php?user_id=<?= $blog["author_id"] ?>" class="w-full text-gray-800 font-semibold"> <?= $blog["author_name"] ?></a>
-                                        </strong>
-                                    </p>
-                                    <p>
-                                        <small class="font-semibold"><?= blogDate($blog["created_at"]) ?></small>
-                                    </p>
+                                <div class="mt-3 flex flex-col">
+                                    <!-- Display blog tags -->
+                                    <div class="flex items-center flex-wrap">
+                                        <?php if (isset($blog["tags"])) : ?>
+                                            <?php foreach (explode(",", $blog["tags"]) as $tag) : ?>
+                                                <a href="blogs.php?tag=<?= $tag ?>">
+                                                    <strong class="inline-block text-gray-500 px-2 py-1 text-xs cursor-pointer">#<?= $tag ?></strong>
+                                                </a>
+                                            <?php endforeach ?>
+                                        <?php endif ?>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-xs">
+                                            Author -
+                                            <strong>
+                                                <a href="user.php?user_id=<?= $blog["author_id"] ?>" class="w-full text-gray-800 font-semibold"> <?= $blog["author_name"] ?></a>
+                                            </strong>
+                                        </p>
+                                        <p>
+                                            <small class="font-semibold"><?= blogDate($blog["created_at"]) ?></small>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
+                            <?php $last_blog_id = $blog["blog_id"]; ?>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php if (count($blogs) > 3 && !$search_query) : ?>
+                        <div id="load-more-div" class="flex items-center justify-center mt-4">
+                            <button id="btn-more" data-last_blog_id="<?= $last_blog_id ?>" class="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-md w-52">Load More</button>
+                            <!-- Failed Message -->
+                            <div id="failed-message" class="text-center text-sm font-semibold"></div>
                         </div>
-                    <?php endforeach ?>
+                    <?php endif; ?>
                 </div>
+
             <?php } else { ?>
                 <div class="md:col-span-3 grid place-items-center">
                     <h3 class="text-xl font-bold text-gray-700">No blog found!</h3>
@@ -176,8 +224,6 @@ $admin = $user_role == "Admin" ? "Admin" : "";
             </div>
         </div>
     </main>
-
-    <script src="js/script.js"></script>
 </body>
 
 </html>

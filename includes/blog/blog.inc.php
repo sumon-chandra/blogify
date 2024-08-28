@@ -1,5 +1,6 @@
 <?php
 require_once "model.inc.php";
+require_once "view.inc.php";
 
 class Blog
 {
@@ -83,8 +84,36 @@ class Blog
             $queryParameters['search_query'] = "%{$search_query}%";
         }
 
+        if ($queryConditions) {
+            $query .= " WHERE " . implode(" AND ", $queryConditions) . " GROUP BY b.blog_id ORDER BY";
+        } else {
+            $query .= " WHERE b.status_id = '3' GROUP BY b.blog_id ORDER BY";
+        }
+
+
+        if (!empty($sort_by)) {
+            if ($sort_by == "newly_created") {
+                $query .= " blog_id DESC";
+            } else if ($sort_by == "old_created") {
+                $query .= " blog_id ASC";
+            } else if ($sort_by == "most_likes") {
+                $query .= " blog_id DESC";
+            }
+        } else {
+            $query .= " blog_id DESC";
+        }
+
+        $query .= " LIMIT 3;";
+        // echo $query;
         $blogModel = new BlogModel();
-        $blogs = $blogModel->getAllBlogs($queryConditions, $queryParameters, $query, $sort_by);
+        $blogs = $blogModel->getAllBlogs($queryParameters, $query);
+        return $blogs;
+    }
+
+    public function getMoreBlogs($last_blog_id)
+    {
+        $blogModel = new BlogModel();
+        $blogs = $blogModel->getMoreBlogs($last_blog_id);
         return $blogs;
     }
 

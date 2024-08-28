@@ -15,29 +15,19 @@ class BlogModel
         $this->pdo = $database->getConnection();
     }
 
-    public function getAllBlogs($queryConditions, $queryParameters, $query, $sort_by)
+    public function getAllBlogs($queryParameters, $query)
     {
-        if ($queryConditions) {
-            $query .= " WHERE " . implode(" AND ", $queryConditions) . " GROUP BY b.blog_id ORDER BY";
-        } else {
-            $query .= " WHERE b.status_id = '3' GROUP BY b.blog_id ORDER BY";
-        }
-
-
-        if (!empty($sort_by)) {
-            if ($sort_by == "newly_created") {
-                $query .= " blog_id DESC";
-            } else if ($sort_by == "old_created") {
-                $query .= " blog_id ASC";
-            } else if ($sort_by == "most_likes") {
-                $query .= " blog_id DESC";
-            }
-        } else {
-            $query .= " blog_id DESC";
-        }
 
         $stmt = $this->pdo->prepare($query);
         $stmt->execute($queryParameters);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getMoreBlogs($last_blog_id)
+    {
+        $query = "SELECT b.*, CONCAT(u.first_name, ' ', u.last_name) AS author_name, IF( LENGTH(GROUP_CONCAT(t.tag_name)) > LENGTH(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2)), CONCAT(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2), ' ...'), GROUP_CONCAT(t.tag_name) ) AS tags FROM blogs AS b LEFT JOIN blog_tags AS bt ON b.blog_id = bt.blog_id LEFT JOIN tags AS t ON bt.tag_id = t.tag_id LEFT JOIN users AS u ON b.author_id = u.user_id WHERE b.status_id = '3' " . " AND b.blog_id < " . $last_blog_id . " GROUP BY b.blog_id ORDER BY blog_id DESC LIMIT 3;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
