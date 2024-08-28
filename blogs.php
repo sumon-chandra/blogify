@@ -161,7 +161,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                             <?php $last_blog_id = $blog["blog_id"]; ?>
                         <?php endforeach; ?>
                     </div>
-                    <?php if (count($blogs) > 3 && !$search_query) : ?>
+                    <?php if (count($blogs) >= 3) : ?>
                         <div id="load-more-div" class="flex items-center justify-center mt-4">
                             <button id="btn-more" data-last_blog_id="<?= $last_blog_id ?>" class="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-md w-52">Load More</button>
                             <!-- Failed Message -->

@@ -44,7 +44,13 @@ class Blog
         $queryConditions = [];
         $queryParameters = [];
         if (!empty($blog_tag)) {
-            $queryConditions[] = "t.tag_name = :tag_name";
+            $queryConditions[] = " b.blog_id IN (
+                                    SELECT bt.blog_id FROM blog_tags AS bt 
+                                    INNER JOIN tags AS t 
+                                    ON bt.tag_id = t.tag_id 
+                                    WHERE t.tag_name = :tag_name
+                                    )
+                               ";
             $queryParameters['tag_name'] = $blog_tag;
         }
         if (!empty($author_id)) {
@@ -85,7 +91,7 @@ class Blog
         }
 
         if ($queryConditions) {
-            $query .= " WHERE " . implode(" AND ", $queryConditions) . " GROUP BY b.blog_id ORDER BY";
+            $query .= " WHERE " . implode(" AND ", $queryConditions) . " AND b.status_id = '3' GROUP BY b.blog_id ORDER BY";
         } else {
             $query .= " WHERE b.status_id = '3' GROUP BY b.blog_id ORDER BY";
         }
@@ -115,6 +121,13 @@ class Blog
         $blogModel = new BlogModel();
         $blogs = $blogModel->getMoreBlogs($last_blog_id);
         return $blogs;
+    }
+
+    public function relatedBlogs($tag_name, $blog_id)
+    {
+        $blogModel = new BlogModel();
+        $relatedBlogs = $blogModel->relatedBlogs($tag_name, $blog_id);
+        return $relatedBlogs;
     }
 
     public function totalBlogs()

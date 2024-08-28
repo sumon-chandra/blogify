@@ -40,22 +40,22 @@ function displayBlog($blog)
     $author_name = $blog["author_name"];
 
     $result = "
-        <div  class='p-4 space-y-4 group rounded-md bg-white text-gray-800 shadow-md h-[20rem] flex flex-col justify-between'>
-             <div class='space-y-2'>
+        <div class='p-4 space-y-4 group rounded-md bg-white text-gray-800 shadow-md h-[20rem] flex flex-col justify-between'>
+            <div class='space-y-2'>
                 <div class='h-40 overflow-hidden'>
-                    <a href='blog.php?blog_id=" . $title . " >
+                    <a href='blog.php?blog_id=" . $blog_id . "'>
                         <img src='" . $thumbnail . "' alt='blog image' class='object-cover w-full h-full group-hover:scale-105 transition-transform duration-300'>
                     </a>
                 </div>
                 <div>
                     <h3 class='text-lg leading-tight font-semibold'>
-                        <a href='blog.php?blog_id=" . $blog_id . ">
+                        <a href='blog.php?blog_id=" . $blog_id . "'>
                             " . $title . "
                         </a>
                     </h3>
                 </div>
             </div>
-             <div class='mt-3 flex flex-col'>
+            <div class='mt-3 flex flex-col'>
                 <!-- Display blog tags -->
                 <div class='flex items-center flex-wrap'>
                     " . displayTags($tags) . "
@@ -64,7 +64,7 @@ function displayBlog($blog)
                     <p class='text-xs'>
                         Author -
                         <strong>
-                            <a href='user.php?user_id=" . $author_id . "' class='w-full text-gray-800 font-semibold'> " . $author_name . "</a>
+                            <a href='user.php?user_id=" . $author_id . "' class='w-full text-gray-800 font-semibold'> " . $author_name . " </a>
                         </strong>
                     </p>
                     <p>

@@ -12,6 +12,20 @@ $blogObject = new Blog();
 $userObject = new User();
 $blog = $blogObject->getBlogById($blog_id);
 $comments = $blogObject->getComments($blog_id);
+$tags = explode(",", $blog['tags']);
+$related_blogs = [];
+
+// Get related blogs based on tags
+if ($tags) {
+    foreach ($tags as $tag) {
+        $related_blogs_array = $blogObject->relatedBlogs($tag, $blog['blog_id']);
+        if ($related_blogs_array) {
+            foreach ($related_blogs_array as $related_blog) {
+                array_push($related_blogs, $related_blog);
+            }
+        }
+    }
+}
 
 $thumbnail = "assets/dummy.jpg";
 $dateTime = new DateTime($blog["created_at"]);
@@ -94,7 +108,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
         </div>
 
         <!-- Comment Section -->
-        <div>
+        <section>
             <h3 class="text-lg font-bold">Leave a comment</h3>
             <div class="mt-5">
                 <form action="includes/blog/comments.inc.php" method="post" enctype="multipart/form-data" class="flex flex-col items-end justify-center">
@@ -141,7 +155,46 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
-        </div>
+        </section>
+
+        <!-- Related blogs Section -->
+        <?php if ($related_blogs) : ?>
+            <section class="mt-5 space-y-5">
+                <div class="w-full h-px bg-gray-400"></div>
+                <h3 class="text-lg font-bold">You may also like these blogs</h3>
+                <div class="grid gap-4 grid-cols-1 md:grid-cols-2">
+                    <?php foreach ($related_blogs as $blog) : ?>
+                        <div class="p-4 rounded-md bg-white text-gray-800 shadow-md h-auto flex justify-between">
+                            <div class="flex items-start gap-4">
+                                <div class="size-16">
+                                    <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-auto">
+                                </div>
+                                <div class="flex flex-col justify-between">
+                                    <div>
+                                        <h3 class="text-sm font-semibold">
+                                            <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
+                                                <?= strlen($blog["title"]) <= 50 ? $blog["title"] : substr($blog["title"], 0, 50) . " ..." ?>
+                                            </a>
+                                        </h3>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <div class="flex items-center flex-wrap">
+                                            <?php if (isset($blog["tags"])) : ?>
+                                                <?php foreach (explode(",", $blog["tags"]) as $tag) : ?>
+                                                    <a href="blogs.php?tag=<?= $tag ?>">
+                                                        <strong class="inline-block text-gray-500 px-2 py-1 text-xs cursor-pointer">#<?= $tag ?></strong>
+                                                    </a>
+                                                <?php endforeach ?>
+                                            <?php endif ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        <?php endif; ?>
     </main>
 </body>
 
