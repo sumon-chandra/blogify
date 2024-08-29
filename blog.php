@@ -30,8 +30,6 @@ if ($tags) {
 }
 
 $thumbnail = "assets/dummy.jpg";
-$dateTime = new DateTime($blog["created_at"]);
-$formattedDate = $dateTime->format("F d Y");
 
 $user_role =  $isLoggedId ? $userObject->userRole($user_id) : "";
 $admin = $user_role == "Admin" ? "Admin" : "";
@@ -133,22 +131,22 @@ $admin = $user_role == "Admin" ? "Admin" : "";
             <h1 class="text-3xl font-bold"><?= $blog["title"]; ?></h1>
         </div>
         <div>
-            <div class="w-full lg:h-72">
-                <img class="w-full h-full object-contain" src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="Blog thumbnail">
+            <div class="w-3/4 mx-auto lg:h-72">
+                <img class="w-full h-full object-cover" src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="Blog thumbnail">
             </div>
-            <div class="mt-10 flex items-center justify-between">
+            <div class="mt-10 flex items-center justify-between text-sm">
                 <div class="flex items-center justify-start gap-3">
                     <?php foreach (explode(",", $blog["tags"]) as $tag) : ?>
                         <?php if ($tag) : ?>
                             <?php $blogTag = str_replace(" ", "", $tag) ?>
-                            <strong class="inline-block text-gray-700 px-2 py-1 text-xs cursor-pointer">
+                            <strong class="inline-block text-gray-700 cursor-pointer">
                                 <a href="blogs.php?tag=<?= $blogTag; ?>">#<?= $blogTag; ?></a>
                             </strong>
                         <?php endif; ?>
                     <?php endforeach; ?>
                     <!-- End of tags loop -->
                 </div>
-                <p class="text-gray-600 text-right">Published at <strong><?= $formattedDate; ?></strong></p>
+                <p class="text-gray-600 text-right">Published at <strong><?= blogDateTime($blog['created_at']) ?></strong></p>
             </div>
             <div class="my-10">
                 <p class="lg:text-xl text-lg whitespace-pre-wrap"><?= $blog["content"]; ?></p>

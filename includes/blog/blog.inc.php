@@ -103,7 +103,7 @@ class Blog
             } else if ($sort_by == "old_created") {
                 $query .= " blog_id ASC";
             } else if ($sort_by == "most_likes") {
-                $query .= " blog_id DESC";
+                $query .= " l.total_likes DESC";
             }
         } else {
             $query .= " blog_id DESC";

@@ -13,8 +13,15 @@ function displayThumbnail($thumbnail)
 function blogDate($date)
 {
     $dateTime = new DateTime($date);
-    $formattedDate = $dateTime->format("F d Y - h : i A");
+    $formattedDate = $dateTime->format("d M Y");
     return $formattedDate;
+}
+
+function blogDateTime($date)
+{
+    $dateTime = new DateTime($date);
+    $formattedDateTime = $dateTime->format("d M Y - h : i A");
+    return $formattedDateTime;
 }
 
 function displayTags($tags)
@@ -48,28 +55,25 @@ function displayBlog($blog)
                     </a>
                 </div>
                 <div>
-                    <h3 class='text-lg leading-tight font-semibold'>
+                    <h3 class='text-sm leading-tight font-semibold'>
                         <a href='blog.php?blog_id=" . $blog_id . "'>
                             " . $title . "
                         </a>
                     </h3>
                 </div>
             </div>
-            <div class='mt-3 flex flex-col'>
+            <div>
                 <!-- Display blog tags -->
                 <div class='flex items-center flex-wrap'>
                     " . displayTags($tags) . "
                 </div>
-                <div class='flex items-center justify-between'>
-                    <p class='text-xs'>
-                        Author -
+                <div class='text-xs'>
+                    <p>
                         <strong>
                             <a href='user.php?user_id=" . $author_id . "' class='w-full text-gray-800 font-semibold'> " . $author_name . " </a>
                         </strong>
                     </p>
-                    <p>
-                        <small class='font-semibold'>" . blogDate($created_at) . "</small>
-                    </p>
+                    <p class='text-right'>" . blogDate($created_at) . "</p>
                 </div>
             </div>
         </div>

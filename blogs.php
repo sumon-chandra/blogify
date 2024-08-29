@@ -22,6 +22,7 @@ $offset = isset($_GET["offset"]) ? intval($_GET["offset"]) : "";
 $blogs = $blogObject->getBlogs($blog_tag, $author_id, $sort_by, $start_date, $end_date, $search_query, $offset);
 $authors = $blogObject->getAuthors();
 $tags = $blogObject->getTags();
+$total_blogs = $blogObject->totalBlogs();
 
 $userModel = new User();
 $user_role = $isLoggedId ? $userModel->userRole($user_id) : "";
@@ -58,6 +59,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                         if (data.success) {
                             $('#blogs').append(data.data);
                             $('#load-more-div').html(data.load_more_btn);
+                            $('#btn-more').text('Load More');
                         } else {
                             $('#btn-more').remove();
                             $('#load-more-div').text(data.message)
@@ -127,15 +129,14 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                                         </a>
                                     </div>
                                     <div>
-                                        <h3 class="text-lg leading-tight font-semibold">
+                                        <h3 class="text-sm leading-tight font-semibold">
                                             <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
                                                 <?= strlen($blog["title"]) <= 50 ? $blog["title"] : substr($blog["title"], 0, 50) . " ..." ?>
                                             </a>
                                         </h3>
                                     </div>
                                 </div>
-                                <div class="mt-3 flex flex-col">
-                                    <!-- Display blog tags -->
+                                <div>
                                     <div class="flex items-center flex-wrap">
                                         <?php if (isset($blog["tags"])) : ?>
                                             <?php foreach (explode(",", $blog["tags"]) as $tag) : ?>
@@ -145,23 +146,20 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                                             <?php endforeach ?>
                                         <?php endif ?>
                                     </div>
-                                    <div class="flex items-center justify-between">
-                                        <p class="text-xs">
-                                            Author -
+                                    <div class="text-xs">
+                                        <p>
                                             <strong>
                                                 <a href="user.php?user_id=<?= $blog["author_id"] ?>" class="w-full text-gray-800 font-semibold"> <?= $blog["author_name"] ?></a>
                                             </strong>
                                         </p>
-                                        <p>
-                                            <small class="font-semibold"><?= blogDate($blog["created_at"]) ?></small>
-                                        </p>
+                                        <p class=""><?= blogDate($blog["created_at"]) ?></p>
                                     </div>
                                 </div>
                             </div>
                             <?php $last_blog_id = $blog["blog_id"]; ?>
                         <?php endforeach; ?>
                     </div>
-                    <?php if (count($blogs) >= 3) : ?>
+                    <?php if ($total_blogs > 3) : ?>
                         <div id="load-more-div" class="flex items-center justify-center flex-col mt-4">
                             <!-- Failed Message -->
                             <div id="failed-message" class="text-center text-sm font-semibold"></div>

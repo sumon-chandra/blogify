@@ -25,7 +25,7 @@ class BlogModel
 
     public function getMoreBlogs($last_blog_id)
     {
-        $query = "SELECT b.*, CONCAT(u.first_name, ' ', u.last_name) AS author_name, IF( LENGTH(GROUP_CONCAT(t.tag_name)) > LENGTH(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2)), CONCAT(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2), ' ...'), GROUP_CONCAT(t.tag_name) ) AS tags FROM blogs AS b LEFT JOIN blog_tags AS bt ON b.blog_id = bt.blog_id LEFT JOIN tags AS t ON bt.tag_id = t.tag_id LEFT JOIN users AS u ON b.author_id = u.user_id WHERE b.status_id = '3' " . " AND b.blog_id < " . $last_blog_id . " GROUP BY b.blog_id ORDER BY blog_id DESC LIMIT 3;";
+        $query = "SELECT b.*, CONCAT(u.first_name, ' ', u.last_name) AS author_name, IF( LENGTH(GROUP_CONCAT(t.tag_name)) > LENGTH(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2)), CONCAT(SUBSTRING_INDEX(GROUP_CONCAT(t.tag_name), ',', 2), ' ...'), GROUP_CONCAT(t.tag_name) ) AS tags FROM blogs AS b LEFT JOIN blog_tags AS bt ON b.blog_id = bt.blog_id LEFT JOIN tags AS t ON bt.tag_id = t.tag_id LEFT JOIN users AS u ON b.author_id = u.user_id WHERE b.status_id = '3' AND b.blog_id < " . $last_blog_id . " GROUP BY b.blog_id ORDER BY blog_id DESC LIMIT 3;";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -60,7 +60,7 @@ class BlogModel
                     ORDER BY b.blog_id DESC;";
         // echo "Related blog Query: " . $query;
         // echo "Tag Name: " . $tag_name;
-        // echo "</>";
+        // echo "</=>";
         // echo "Blog ID: " . $blog_id;
         // echo "</br>";
         $stmt = $this->pdo->prepare($query);
@@ -135,7 +135,7 @@ class BlogModel
                     ) AS c ON b.blog_id = c.blog_id
                     LEFT JOIN blog_tags AS bt ON b.blog_id = bt.blog_id
                     LEFT JOIN tags AS t ON bt.tag_id = t.tag_id
-                    WHERE b.author_id = :user_id
+                    WHERE b.author_id = :user_id AND b.status_id = '3'
                     GROUP BY b.blog_id;";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
