@@ -13,7 +13,7 @@ function displayThumbnail($thumbnail)
 function blogDate($date)
 {
     $dateTime = new DateTime($date);
-    $formattedDate = $dateTime->format("F d Y");
+    $formattedDate = $dateTime->format("F d Y - h : i A");
     return $formattedDate;
 }
 
@@ -102,6 +102,50 @@ function displayLikes($total_likes)
             </div>
                 ";
     }
+    return $result;
+}
+
+function displayAvatar($avatar)
+{
+    if (empty($avatar)) {
+        return "
+        <img src='../../assets/user.png' alt='Commented User' class='size-10 rounded-full'>
+        ";
+    } else {
+        return "
+        <img src='uploads/avatars/" . $avatar . "' alt='Commented User' class='size-10 rounded-full'>
+        ";
+    }
+}
+
+function displayComment($comment)
+{
+    $comment_text = $comment["comment_text"];
+    $created_at = $comment["created_at"];
+    $author_id = $comment["user_id"];
+    $comment_author = $comment["comment_author"];
+    $author_avatar = $comment["author_avatar"];
+
+
+    $result = "
+        <div class='p-4 mt-2 border border-gray-300 text-gray-800'>
+            <div class='flex items-center justify-start gap-2'>
+                <div>
+                    <a href='user.php?user_id=<?=" . $author_id . " ?>'>
+                        " . displayAvatar($author_avatar) . "
+                    </a>
+                </div>
+                <div>
+                    <h3 class='text-xs font-bold'>" . $comment_author . "</h3>
+                    <p class='text-xs'>" . $created_at . "</p>
+                </div>
+            </div>
+            <div class='mt-2 text'>
+                <p>" . $comment_text . "</p>
+            </div>
+        </div>
+    ";
+
     return $result;
 }
 

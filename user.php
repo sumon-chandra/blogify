@@ -18,7 +18,6 @@ $admin = $user_role == "Admin" ? "Admin" : "";
 // Get Blogs, Authors, Tags
 $approved_blogs = $blogModel->getApprovedBlogsById($user_id);
 $user = $userModel->getUserById($user_id);
-$tags = $blogModel->getTags();
 
 $isPostedYet = empty($approved_blogs);
 $user_name = $user["first_name"] . " " . $user["last_name"];
@@ -73,7 +72,7 @@ if ($user["gender"] == "Male") {
             </ul>
         </nav>
     </header>
-    <main class="p-4 lg:p-0">
+    <main class="p-4 lg:p-0 mb-10">
         <div class="py-10 bg-gradient-to-br from-gray-50 via-gray-200 to-gray-50">
             <div class="lg:w-[1250px] mx-auto flex items-start justify-between">
                 <div class="space-y-5">
@@ -109,14 +108,14 @@ if ($user["gender"] == "Male") {
         </div>
         <div class="">
             <?php if ($approved_blogs) { ?>
-                <div class="">
+                <div class="space-y-6">
                     <?php foreach ($approved_blogs as $blog) : ?>
                         <div class="p-4 rounded-md bg-white text-gray-800 shadow-md h-auto flex justify-between">
-                            <div class="flex gap-4">
-                                <div class="h-40">
-                                    <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-cover w-full h-full">
+                            <div class="flex items-start gap-4">
+                                <div class="w-32 pt-[9px]">
+                                    <img src="<?= displayThumbnail($blog["thumbnail"]) ?>" alt="blog image" class="object-contain h-auto w-full">
                                 </div>
-                                <div class="flex flex-col justify-between">
+                                <div class="flex-1 flex flex-col justify-between">
                                     <div>
                                         <h3 class="text-lg font-semibold">
                                             <a href="blog.php?blog_id=<?= $blog["blog_id"] ?>">
@@ -140,9 +139,8 @@ if ($user["gender"] == "Male") {
                                         <div class="grid grid-cols-4">
                                             <div class="col-span-3 flex items-center justify-start gap-7">
                                                 <div class="flex items-center justify-start gap-3">
-                                                    <p href="#" class="text-gray-500 text-left py-1 rounded-md font-semibold cursor-pointer">Like <strong class="text-gray-800">10</strong></p>
-                                                    <p href="#" class="text-gray-500 text-left py-1 rounded-md font-semibold cursor-pointer">Comment <strong class="text-gray-800">6</strong></p>
-                                                    <p href="#" class="text-gray-500 text-left py-1 rounded-md font-semibold cursor-pointer">Share <strong class="text-gray-800">2</strong></p>
+                                                    <p class="text-gray-500 text-left py-1 rounded-md font-semibold">Like <strong class="text-gray-800"><?= $blog['total_likes'] ?></strong></p>
+                                                    <p class="text-gray-500 text-left py-1 rounded-md font-semibold">Comment <strong class="text-gray-800"><?= $blog['total_comments'] ?></strong></p>
                                                 </div>
                                                 <p>
                                                     <small class="font-semibold"><?= blogDate($blog["created_at"]) ?></small>
@@ -162,7 +160,6 @@ if ($user["gender"] == "Male") {
             <?php } ?>
         </div>
     <?php endif; ?>
-    </div>
     </main>
 </body>
 

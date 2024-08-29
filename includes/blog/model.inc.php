@@ -121,7 +121,22 @@ class BlogModel
     }
     public function getAllApprovedBlogsById($user_id)
     {
-        $query = "SELECT * FROM blogs WHERE author_id = :user_id AND status_id = '3';";
+        $query = "SELECT 
+                    b.*,
+                    COALESCE(l.total_likes, 0) AS total_likes,
+                    COALESCE(c.total_comments, 0) AS total_comments,
+                    GROUP_CONCAT(DISTINCT t.tag_name SEPARATOR ', ') AS tags
+                    FROM blogs AS b 
+                    LEFT JOIN (
+                        SELECT blog_id, COUNT(like_id) AS total_likes FROM likes GROUP BY blog_id
+                    ) AS l ON b.blog_id = l.blog_id
+                    LEFT JOIN (
+                        SELECT blog_id, COUNT(comment_id) AS total_comments FROM comments GROUP BY blog_id
+                    ) AS c ON b.blog_id = c.blog_id
+                    LEFT JOIN blog_tags AS bt ON b.blog_id = bt.blog_id
+                    LEFT JOIN tags AS t ON bt.tag_id = t.tag_id
+                    WHERE b.author_id = :user_id
+                    GROUP BY b.blog_id;";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
         $stmt->execute();
@@ -343,7 +358,7 @@ class BlogModel
         return $stmt->rowCount();
     }
 
-    public function selectComments($blog_id)
+    public function selectComments($blog_id, $sort_by)
     {
         $query = "SELECT 
                     c.comment_id,
@@ -355,7 +370,16 @@ class BlogModel
                     FROM comments AS c 
                     LEFT JOIN users AS u 
                     ON u.user_id = c.user_id
-                    WHERE c.blog_id = :blog_id;";
+                    WHERE c.blog_id = :blog_id ORDER BY c.created_at";
+        if ($sort_by == "new") {
+            $query .= " DESC;";
+        } else if ($sort_by == "old") {
+            $query .= " ASC;";
+        } else {
+            $query .= " DESC;";
+        }
+        // echo $query;
+
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":blog_id", $blog_id);
         $stmt->execute();

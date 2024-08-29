@@ -278,10 +278,10 @@ class Blog
         $blogModel->insertComments($comment_text, $user_id, $blog_id);
     }
 
-    public function getComments($blog_id)
+    public function getComments($blog_id, $sort_by)
     {
         $blogModel = new BlogModel();
-        $data =  $blogModel->selectComments($blog_id);
+        $data =  $blogModel->selectComments($blog_id, $sort_by);
         return $data;
     }
 }

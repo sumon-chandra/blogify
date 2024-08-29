@@ -11,7 +11,7 @@ $isLoggedId = $user_id;
 $blogObject = new Blog();
 $userObject = new User();
 $blog = $blogObject->getBlogById($blog_id);
-$comments = $blogObject->getComments($blog_id);
+$comments = $blogObject->getComments($blog_id, "");
 $total_likes = $blogObject->getTotalLikes($blog_id, $user_id);
 
 $tags = explode(",", $blog['tags']);
@@ -48,8 +48,8 @@ $admin = $user_role == "Admin" ? "Admin" : "";
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script>
-        // Insert like 
         $(document).ready(function() {
+            // Insert like 
             $("#like-btn").click(function() {
                 let blog_id = $(this).data("blog_id");
                 let user_id = $(this).data("user_id");
@@ -72,6 +72,36 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                     }
                 });
             });
+
+            // Sort comments by date
+            $('#sort_by').change(function(event) {
+                let sort_by = event.target.value;
+                let blog_id = $('#sort_by').data('blog_id');
+                console.log({
+                    sort_by,
+                    blog_id
+                });
+
+                $.ajax({
+                    url: "handle-comments.php",
+                    method: 'POST',
+                    data: {
+                        blog_id,
+                        sort_by
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+
+                        if (data.status == 'success') {
+                            $('#comments').html(data.comments);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            })
         });
     </script>
 </head>
@@ -126,7 +156,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
         </div>
         <div class="flex items-center justify-between py-8">
             <div>
-                <p class="text-gray-600">Created by <strong><?= $blog["author_name"]; ?></strong></p>
+                <p class="text-gray-600">Created by <strong><a href="user.php?user_id=<?= $blog["author_id"] ?>"><?= $blog["author_name"]; ?></a></strong></p>
             </div>
             <div>
                 <p><strong><?= $blog["total_views"] ?></strong> People reads the blog.</p>
@@ -135,7 +165,7 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                 <?php if ($total_likes["has_liked"]) : ?>
                     <?= displayLikes($total_likes) ?>
                 <?php else : ?>
-                    <button id="like-btn" disabled="<?= $user_id ?>" data-blog_id="<?= $blog_id ?>" data-user_id="<?= $user_id ?>" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700 disabled:bg-gray-700">Like <strong id="likes"><?= $total_likes["total_likes"] ?></strong></button>
+                    <button id="like-btn" data-blog_id="<?= $blog_id ?>" data-user_id="<?= $user_id ?>" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700 disabled:bg-gray-700">Like <strong id="likes"><?= $total_likes["total_likes"] ?></strong></button>
                 <?php endif; ?>
             </div>
         </div>
@@ -157,18 +187,16 @@ $admin = $user_role == "Admin" ? "Admin" : "";
                 <div class="flex items-end justify-between">
                     <h3 class="text-lg font-bold">Comments</h3>
                     <div>
-                        <form action="includes/blog/comments.inc.php" method="get">
-                            <select name="sort_by" id="sort_by" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700 mt-4">
-                                <option value="">Sort By</option>
-                                <option value="new">New</option>
-                                <option value="old">Old</option>
-                            </select>
-                        </form>
+                        <select name="sort_by" id="sort_by" data-blog_id="<?= $blog_id ?>" class="bg-gray-800 text-white px-4 py-1 rounded-md hover:bg-gray-700 mt-4">
+                            <option value="">Sort By</option>
+                            <option value="new">New</option>
+                            <option value="old">Old</option>
+                        </select>
                     </div>
                 </div>
 
                 <!-- Comment List -->
-                <div class="mt-4 p-3 bg-white">
+                <div id="comments" class="mt-4 p-3 bg-white">
                     <?php foreach ($comments as $comment) : ?>
                         <div class="p-4 mt-2 border border-gray-300 text-gray-800">
                             <div class="flex items-center justify-start gap-2">
